@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { GameSession } from "./GameSession.js";
+import { GAME_CONFIG } from "./config.js";
 import {
+  circleOverlapsAny,
   circlesOverlap,
   getDifficulty,
   getHealAmount,
@@ -83,6 +85,28 @@ describe("colisões e persistência", () => {
         { x: 20, y: 0, radius: 10 },
       ),
     ).toBe(true);
+  });
+
+  it("detecta colisão ao longo de uma hitbox composta", () => {
+    const hitbox = [-32, -16, 0, 16, 32].map((x) => ({
+      x,
+      y: 0,
+      radius: 12,
+    }));
+
+    expect(circleOverlapsAny({ x: -40, y: 0, radius: 2 }, hitbox)).toBe(true);
+    expect(circleOverlapsAny({ x: 0, y: 15, radius: 2 }, hitbox)).toBe(false);
+  });
+
+  it("mantém a hitbox inimiga menor que o sprite", () => {
+    const halfHitboxWidth =
+      Math.max(...GAME_CONFIG.enemy.hitboxOffsets.map(Math.abs)) +
+      GAME_CONFIG.enemy.hitboxRadius;
+
+    expect(halfHitboxWidth).toBeLessThanOrEqual(GAME_CONFIG.enemy.width / 2);
+    expect(GAME_CONFIG.enemy.hitboxRadius).toBeLessThanOrEqual(
+      GAME_CONFIG.enemy.height / 2,
+    );
   });
 
   it("mantém somente o maior recorde", () => {

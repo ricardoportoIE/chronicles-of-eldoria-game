@@ -1,6 +1,6 @@
 import { GAME_CONFIG } from "./config.js";
 import { GameSession } from "./GameSession.js";
-import { circlesOverlap } from "./rules.js";
+import { circleOverlapsAny } from "./rules.js";
 import { Enemy, Hero, Spark } from "./entities.js";
 
 export class CanvasGame {
@@ -106,7 +106,7 @@ export class CanvasGame {
       const enemy = this.enemies.find(
         (candidate) =>
           !hitEnemies.has(candidate.id) &&
-          circlesOverlap(bullet, candidate.hitCircle),
+          circleOverlapsAny(bullet, candidate.hitCircles),
       );
       if (!enemy) continue;
 
@@ -123,7 +123,7 @@ export class CanvasGame {
     this.enemies = this.enemies.filter((enemy) => !hitEnemies.has(enemy.id));
 
     for (const enemy of this.enemies) {
-      if (!circlesOverlap(this.hero.hitCircle, enemy.hitCircle)) continue;
+      if (!circleOverlapsAny(this.hero.hitCircle, enemy.hitCircles)) continue;
       const damage = this.session.takeDamage();
       enemy.respawn(this.session.getSnapshot().difficulty.enemySpeed);
       if (damage > 0) {

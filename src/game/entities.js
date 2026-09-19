@@ -198,8 +198,16 @@ export class Enemy {
     context.restore();
   }
 
-  get hitCircle() {
-    return { x: this.x, y: this.y, radius: this.config.enemy.radius };
+  get hitCircles() {
+    const magnitude = Math.hypot(this.vx, this.vy) || 1;
+    const directionX = this.vx / magnitude;
+    const directionY = this.vy / magnitude;
+
+    return this.config.enemy.hitboxOffsets.map((offset) => ({
+      x: this.x + directionX * offset,
+      y: this.y + directionY * offset,
+      radius: this.config.enemy.hitboxRadius,
+    }));
   }
 }
 

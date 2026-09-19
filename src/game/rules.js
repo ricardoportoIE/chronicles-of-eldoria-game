@@ -49,3 +49,7 @@ export function circlesOverlap(first, second) {
   const radius = first.radius + second.radius;
   return distanceX * distanceX + distanceY * distanceY <= radius * radius;
 }
+
+export function circleOverlapsAny(circle, targets) {
+  return targets.some((target) => circlesOverlap(circle, target));
+}
