@@ -1,0 +1,42 @@
+export const GAME_CONFIG = Object.freeze({
+  world: Object.freeze({ width: 960, height: 600 }),
+  hero: Object.freeze({
+    maxLife: 100,
+    speed: 270,
+    radius: 18,
+    width: 72,
+    height: 72,
+    invulnerabilitySeconds: 0.7,
+  }),
+  projectile: Object.freeze({
+    speed: 570,
+    radius: 8,
+    cooldownSeconds: 0.55,
+  }),
+  enemy: Object.freeze({
+    baseCount: 5,
+    maxCount: 14,
+    baseSpeed: 105,
+    maxSpeed: 250,
+    radius: 14,
+    width: 92,
+    height: 34,
+  }),
+  progression: Object.freeze({
+    levelEverySeconds: 20,
+    enemyEveryLevels: 1,
+    speedPerLevel: 11,
+    baseDamage: 8,
+    damageEverySeconds: 30,
+    damageStep: 2,
+    baseHeal: 6,
+    healEverySeconds: 45,
+    maxHeal: 12,
+  }),
+  scoring: Object.freeze({
+    baseHit: 100,
+    survivalPerSecond: 8,
+    comboWindowSeconds: 2.25,
+    maxCombo: 8,
+  }),
+});
