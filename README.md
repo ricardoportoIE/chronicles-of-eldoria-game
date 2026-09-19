@@ -1,113 +1,74 @@
 # Chronicles of Eldoria
 
-Chronicles of Eldoria é um jogo 2D desenvolvido em JavaScript utilizando Node.js, Vite e Anime.js. Este projeto inclui uma tela inicial animada e um efeito de "Loading..." enquanto os recursos do jogo estão sendo carregados.
+Um pequeno survival game 2D feito com JavaScript moderno e Canvas. Você assume o papel do último guardião de Eldoria: precisa desviar das sentinelas de fogo e usar a luz arcana para converter seus ataques em energia vital.
 
-# Deploy (Netlify)
+O projeto nasceu como atividade acadêmica no curso de TSI do IFSul Pelotas e foi modernizado para demonstrar organização de código, regras testáveis, animação em tempo real, interface responsiva e integração com bibliotecas.
 
-```bash
-https://chroniclesofeldoria.netlify.app/
-```
+## O que há no jogo
 
-## Pré-requisitos
+- Movimentação por WASD ou setas, com diagonais normalizadas.
+- Disparo de luz arcana com a barra de espaço.
+- Dificuldade progressiva por capítulos: mais inimigos, velocidade e dano.
+- Cura, pontuação, combo, tempo de sobrevivência e recorde local.
+- Pausa, reinício, tela cheia e controle de som sem diálogos bloqueantes.
+- Controles de toque para celulares e tablets.
+- Interface acessível com foco visível, regiões semânticas e suporte a movimento reduzido.
+- Globo renderizado com Three.js e carregado sob demanda.
 
-- Node.js (versão 12 ou superior)
-- npm (geralmente incluído com o Node.js)
+## Executar localmente
 
-## Como Baixar e Usar
-
-Siga estas etapas para configurar e executar o projeto localmente:
-
-### 1. Clonar o Repositório
-
-Clone o repositório do projeto para o seu computador.
-
-```bash
-git clone https://github.com/ricard00liveira/lpaw_2024.git
-cd chronicles-of-eldoria
-```
-
-### 2. Instalar as Dependências
-
-Instale as dependências do projeto usando npm.
+Requer Node.js 20.19 ou superior.
 
 ```bash
 npm install
-```
-
-### 3. Executar o Servidor de Desenvolvimento
-
-Execute o servidor de desenvolvimento do Vite.
-
-```bash
 npm run dev
 ```
 
-### 4. Abrir o Jogo no Navegador
+Abra a URL exibida pelo Vite, normalmente `http://localhost:5173`.
 
-Abra seu navegador e acesse a URL fornecida pelo Vite, geralmente:
-
-```bash
-http://localhost:3000
-```
-
-## Estrutura do Projeto
+## Comandos
 
 ```bash
-chronicles-of-eldoria/
-│   .gitignore
-│   Enemy.js
-│   game.js
-│   Hero.js
-│   hud.js
-│   index.html
-│   init.js
-│   keyboard.js
-│   loaderAssets.js
-│   main.js
-│   model.js
-│   package-lock.json
-│   package.json
-│   preload.js
-│   README.md
-│   structure.txt
-│   three.html
-│
-├───assets
-│   └───styles
-│           MedievalSharp-Regular.ttf
-│           styles.css
-│
-├───geometries
-│       Circle.js
-│       Quad.js
-│       Rect.js
-│       redCirc.js
-│             package.json
-│
-└───public
-    │   2k_earth_daymap.jpg
-    │   background.webp
-    │   book_menu.png
-    │   dust.png
-    │   earth1.obj
-    │   fireball_game_shoot.png
-    │   loading.webp
-    │   sprite_char_transparente.png
-    │   sprite_char_transparente2.png
-    │
-    ├───favicon
-    │       android-chrome-192x192.png
-    │       android-chrome-512x512.png
-    │       apple-touch-icon.png
-    │       favicon-16x16.png
-    │       favicon-32x32.png
-    │       favicon.ico
-    │       site.webmanifest
-    │
-    └───sounds
-            colide_cut.mp3
-            collect_life.mp3
-            gameover.mp3
-            shoot.mp3
-            theme.mp3
+npm run dev       # servidor de desenvolvimento
+npm test          # testes unitários das regras
+npm run test:e2e  # jornada real em navegador Chromium/Edge
+npm run build     # build de produção
+npm run preview   # visualiza o build localmente
 ```
+
+O teste E2E procura Edge ou Chrome nos caminhos padrão do Windows. Em outro ambiente, defina `ELDORIA_BROWSER` com o caminho do executável Chromium.
+
+## Arquitetura
+
+```text
+src/
+├── main.js                 interface e orquestração
+├── realmMark.js            integração Three.js sob demanda
+└── game/
+    ├── CanvasGame.js       game loop, colisões e renderização
+    ├── GameSession.js      estado e ciclo da partida
+    ├── entities.js         herói, inimigos, projéteis e partículas
+    ├── InputController.js  teclado e entrada virtual
+    ├── AudioManager.js     trilha e efeitos
+    ├── AssetLoader.js      carregamento de imagens
+    ├── rules.js            regras puras e testáveis
+    ├── config.js           balanceamento centralizado
+    └── storage.js          recorde local resiliente
+```
+
+O loop usa `requestAnimationFrame` com delta de tempo limitado. A simulação fica consistente em diferentes taxas de atualização e não avança enquanto a partida está pausada. As regras independentes do Canvas são cobertas com Vitest, e a jornada principal é verificada com Playwright Core usando o navegador já instalado.
+
+## Tecnologias
+
+- JavaScript ES Modules
+- Canvas 2D
+- Three.js
+- Vite
+- Vitest
+- Playwright Core
+
+## Autoria
+
+Projeto original e assets: Ricardo Porto de Oliveira, IFSul Câmpus Pelotas — TSI, 2024.
+
+Modernização mantida na mesma proposta narrativa e visual do jogo original.

@@ -60,6 +60,19 @@ describe("sessão de jogo", () => {
     expect(session.takeDamage()).toBe(8);
     expect(session.status).toBe("gameover");
   });
+
+  it("encerra o combo fora da janela e ignora dano durante a invulnerabilidade", () => {
+    const session = new GameSession();
+    session.start();
+    session.registerHit();
+    session.elapsed += session.config.scoring.comboWindowSeconds + 0.1;
+    session.update(0);
+    expect(session.combo).toBe(0);
+
+    expect(session.takeDamage()).toBe(8);
+    expect(session.takeDamage()).toBe(0);
+    expect(session.life).toBe(92);
+  });
 });
 
 describe("colisões e persistência", () => {

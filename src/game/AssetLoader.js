@@ -3,7 +3,6 @@ const IMAGE_SOURCES = Object.freeze({
   menu: "/book_menu.png",
   hero: "/sprite_char_transparente.png",
   enemy: "/fireball_game_shoot.png",
-  dust: "/dust.png",
 });
 
 function loadImage(source) {
