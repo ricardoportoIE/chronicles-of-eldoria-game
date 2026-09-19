@@ -42,7 +42,7 @@ async function measure(page, url, label) {
     const observer = new PerformanceObserver((list) => {
       longTasks.push(...list.getEntries().map((entry) => entry.duration));
     });
-    try { observer.observe({ type: "longtask", buffered: true }); } catch {}
+    try { observer.observe({ type: "longtask" }); } catch {}
 
     const frames = await new Promise((resolve) => {
       const deltas = [];
