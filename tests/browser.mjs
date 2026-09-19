@@ -55,16 +55,56 @@ try {
   await page.locator("#app[data-game-state='playing']").waitFor();
 
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.reload({ waitUntil: "networkidle" });
+  await page.locator("#app[data-game-state='ready'][data-layout='portrait']").waitFor();
+
+  const canvasSize = await page.locator("#gameCanvas").evaluate((canvas) => ({
+    width: canvas.width,
+    height: canvas.height,
+  }));
+  if (canvasSize.width !== 540 || canvasSize.height !== 960) {
+    throw new Error(`Arena mobile inválida: ${canvasSize.width}x${canvasSize.height}.`);
+  }
+
+  const canvasFrame = await page.locator(".canvas-frame").boundingBox();
+  const renderedRatio = canvasFrame.width / canvasFrame.height;
+  if (Math.abs(renderedRatio - 9 / 16) > 0.01) {
+    throw new Error(`Proporção mobile inválida: ${renderedRatio}.`);
+  }
+
+  const pageMetrics = await page.evaluate(() => ({
+    viewportWidth: window.innerWidth,
+    viewportHeight: window.innerHeight,
+    documentWidth: document.documentElement.scrollWidth,
+    documentHeight: document.documentElement.scrollHeight,
+  }));
+  if (pageMetrics.documentWidth > pageMetrics.viewportWidth + 1) {
+    throw new Error("A interface mobile exige rolagem horizontal.");
+  }
+  if (pageMetrics.documentHeight > pageMetrics.viewportHeight + 1) {
+    throw new Error("A interface mobile exige rolagem vertical.");
+  }
+
+  await page.getByRole("button", { name: "Abrir as crônicas" }).click();
+  await page.locator("#app[data-game-state='playing']").waitFor();
   const touchDisplay = await page.locator(".touch-controls").evaluate(
     (element) => getComputedStyle(element).display,
   );
   if (touchDisplay !== "flex") throw new Error("Os controles de toque não apareceram no viewport mobile.");
 
+  const fireButton = page.getByRole("button", { name: "Disparar luz arcana" });
+  await fireButton.dispatchEvent("pointerdown", { pointerId: 1 });
+  await page.waitForTimeout(80);
+  if ((await page.locator("#shotValue").textContent()) !== "RECARREGANDO") {
+    throw new Error("O disparo por toque não iniciou a recarga.");
+  }
+  await fireButton.dispatchEvent("pointerup", { pointerId: 1 });
+
   if (browserErrors.length) {
     throw new Error(`Erros no navegador: ${browserErrors.join(" | ")}`);
   }
 
-  console.log("E2E aprovado: carregar, iniciar, pontuar, disparar, pausar, retomar e exibir controles mobile.");
+  console.log("E2E aprovado: desktop completo e mobile 9:16 sem rolagem, com controles de toque.");
 } finally {
   await browser?.close();
   await server.close();

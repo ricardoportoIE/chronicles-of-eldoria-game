@@ -12,7 +12,8 @@ O projeto nasceu como atividade acadêmica no curso de TSI do IFSul Pelotas e fo
 - Fusão vetorial de sentinelas: chamas que se encontram crescem e seguem a direção da força resultante.
 - Cura, pontuação, combo, tempo de sobrevivência e recorde local.
 - Pausa, reinício, tela cheia e controle de som sem diálogos bloqueantes.
-- Controles de toque para celulares e tablets.
+- Arena mobile nativa em `9:16`, redimensionada sem distorcer sprites ou hitboxes.
+- Controles de toque para celulares e tablets, com HUD compacto sobre a arena.
 - Interface acessível com foco visível, regiões semânticas e suporte a movimento reduzido.
 - Globo renderizado com Three.js e carregado sob demanda.
 

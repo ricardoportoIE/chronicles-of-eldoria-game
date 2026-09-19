@@ -4,7 +4,16 @@ import { circleOverlapsAny, shapesOverlap } from "./rules.js";
 import { Enemy, Hero, Spark } from "./entities.js";
 
 export class CanvasGame {
-  constructor({ canvas, assets, audio, input, onUpdate, onGameOver, onLevel }) {
+  constructor({
+    canvas,
+    assets,
+    audio,
+    input,
+    config = GAME_CONFIG,
+    onUpdate,
+    onGameOver,
+    onLevel,
+  }) {
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
     this.assets = assets;
@@ -13,8 +22,9 @@ export class CanvasGame {
     this.onUpdate = onUpdate;
     this.onGameOver = onGameOver;
     this.onLevel = onLevel;
-    this.session = new GameSession();
-    this.hero = new Hero();
+    this.config = config;
+    this.session = new GameSession(config);
+    this.hero = new Hero(config);
     this.enemies = [];
     this.sparks = [];
     this.nextEnemyId = 0;
@@ -95,7 +105,7 @@ export class CanvasGame {
   syncEnemies() {
     const { enemyCount, enemySpeed } = this.session.getSnapshot().difficulty;
     while (this.enemies.length < enemyCount) {
-      this.enemies.push(new Enemy(++this.nextEnemyId, enemySpeed));
+      this.enemies.push(new Enemy(++this.nextEnemyId, enemySpeed, this.config));
     }
   }
 
@@ -198,7 +208,7 @@ export class CanvasGame {
       if (this.shake < 0.2) this.shake = 0;
     }
 
-    context.drawImage(this.assets.arena, 0, 0, canvas.width, canvas.height);
+    this.drawArenaBackground();
     context.fillStyle = "rgba(4, 8, 17, 0.16)";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -213,5 +223,34 @@ export class CanvasGame {
   destroy() {
     cancelAnimationFrame(this.frameRequest);
     this.audio.stopTheme();
+  }
+
+  drawArenaBackground() {
+    const { context, canvas } = this;
+    const image = this.assets.arena;
+    const imageRatio = image.naturalWidth / image.naturalHeight;
+    const canvasRatio = canvas.width / canvas.height;
+    let sourceWidth = image.naturalWidth;
+    let sourceHeight = image.naturalHeight;
+
+    if (imageRatio > canvasRatio) {
+      sourceWidth = image.naturalHeight * canvasRatio;
+    } else {
+      sourceHeight = image.naturalWidth / canvasRatio;
+    }
+
+    const sourceX = (image.naturalWidth - sourceWidth) / 2;
+    const sourceY = (image.naturalHeight - sourceHeight) / 2;
+    context.drawImage(
+      image,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    );
   }
 }

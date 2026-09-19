@@ -398,13 +398,202 @@ kbd {
   .topbar { min-height: 44px; }
   .icon-button, .github-link { min-width: 38px; min-height: 38px; }
   #realmMark { width: 30px; height: 30px; }
-  .canvas-frame { min-height: 62vh; aspect-ratio: auto; }
-  #gameCanvas { object-fit: cover; }
   .game-overlay--intro { background-size: auto 100%; }
   .story-panel h1 { font-size: 1.45rem; }
-  .story-panel > p:not(.eyebrow) { font-size: 0.82rem; }
+  .story-panel > p:not(.eyebrow) { font-size: 1rem; }
   .instructions { gap: 8px; }
-  kbd { min-width: auto; padding: 4px 6px; font-size: 0.57rem; }
+  kbd { min-width: auto; padding: 4px 6px; font-size: 0.75rem; }
+}
+
+@media (max-width: 760px) and (orientation: portrait) {
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    background: #05080e;
+  }
+
+  .app[data-layout="portrait"] {
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    padding: 0;
+    grid-template-rows: 48px minmax(0, 1fr);
+    gap: 0;
+  }
+
+  [data-layout="portrait"] .topbar {
+    position: relative;
+    z-index: 6;
+    min-height: 48px;
+    padding: 4px 10px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(5, 8, 14, 0.96);
+  }
+
+  [data-layout="portrait"] .brand {
+    gap: 0;
+  }
+
+  [data-layout="portrait"] .brand strong {
+    font-size: 0.9rem;
+  }
+
+  [data-layout="portrait"] .brand small {
+    margin-top: 4px;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+  }
+
+  [data-layout="portrait"] .github-link {
+    display: none;
+  }
+
+  [data-layout="portrait"] .icon-button {
+    min-width: 38px;
+    min-height: 38px;
+  }
+
+  [data-layout="portrait"] .game-shell {
+    min-height: 0;
+    overflow: hidden;
+    place-items: center;
+  }
+
+  [data-layout="portrait"] .arena {
+    position: relative;
+    width: auto;
+    height: min(100%, 177.7778vw);
+    max-width: 100vw;
+    max-height: calc(100dvh - 48px);
+    aspect-ratio: 9 / 16;
+    border-block: 0;
+    border-radius: 0;
+    box-shadow: 0 0 54px rgba(0, 0, 0, 0.82);
+  }
+
+  [data-layout="portrait"] .canvas-frame {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 9 / 16;
+  }
+
+  [data-layout="portrait"] .hud {
+    position: absolute;
+    z-index: 3;
+    inset: 0 0 auto;
+    min-height: 76px;
+    grid-template: auto auto / 1.35fr 0.9fr 0.75fr;
+    grid-template-areas:
+      "life life level"
+      "score time shot";
+    gap: 7px 10px;
+    padding: 9px 12px 8px;
+    border-bottom: 1px solid rgba(229, 185, 88, 0.42);
+    background: linear-gradient(180deg, rgba(6, 10, 17, 0.96), rgba(6, 10, 17, 0.78));
+    backdrop-filter: blur(5px);
+    pointer-events: none;
+  }
+
+  [data-layout="portrait"] .hud__life {
+    grid-area: life;
+    grid-template-columns: minmax(80px, 1fr) 30px;
+    gap: 3px 8px;
+  }
+
+  [data-layout="portrait"] .hud__stat:nth-child(2) { grid-area: score; }
+  [data-layout="portrait"] .hud__stat:nth-child(3) { grid-area: level; text-align: right; }
+  [data-layout="portrait"] .hud__stat:nth-child(4) { grid-area: time; }
+  [data-layout="portrait"] .hud__stat:nth-child(5) { grid-area: shot; display: block; }
+
+  [data-layout="portrait"] .hud__label {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+  }
+
+  [data-layout="portrait"] .hud strong {
+    font-size: 0.86rem;
+  }
+
+  [data-layout="portrait"] .hud__shot strong {
+    font-size: 0.63rem;
+  }
+
+  [data-layout="portrait"] .life-bar {
+    height: 7px;
+  }
+
+  [data-layout="portrait"] .game-overlay {
+    padding: 18px 14px;
+  }
+
+  [data-layout="portrait"] .game-overlay--intro {
+    background:
+      linear-gradient(rgba(29, 15, 7, 0.08), rgba(29, 15, 7, 0.16)),
+      url("/book_menu.png") center / auto 100% no-repeat,
+      #cba679;
+  }
+
+  [data-layout="portrait"] .story-panel {
+    width: min(92%, 420px);
+    padding: 24px 18px;
+    border: 1px solid rgba(88, 44, 20, 0.35);
+    border-radius: 4px;
+    background: rgba(239, 217, 180, 0.9);
+    box-shadow: 0 14px 34px rgba(48, 21, 7, 0.25);
+    transform: none;
+  }
+
+  [data-layout="portrait"] .story-panel h1 {
+    font-size: clamp(1.7rem, 8vw, 2.35rem);
+  }
+
+  [data-layout="portrait"] .story-panel > p:not(.eyebrow) {
+    margin-block: 14px;
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+
+  [data-layout="portrait"] .instructions {
+    gap: 10px;
+    margin-block: 18px 12px;
+  }
+
+  [data-layout="portrait"] .instructions small {
+    display: block;
+    font-size: 0.72rem;
+  }
+
+  [data-layout="portrait"] .touch-controls {
+    inset: auto 0 16px;
+    padding-inline: 16px;
+  }
+
+  [data-layout="portrait"] .touch-dpad {
+    width: clamp(108px, 32vw, 132px);
+    height: clamp(108px, 32vw, 132px);
+  }
+
+  [data-layout="portrait"] .touch-button {
+    font-size: 0.9rem;
+  }
+
+  [data-layout="portrait"] .touch-button--fire {
+    width: clamp(66px, 20vw, 80px);
+    height: clamp(66px, 20vw, 80px);
+    margin: 0 4px 14px 0;
+    font-size: 1rem;
+  }
+
+  [data-layout="portrait"] .modal-card {
+    width: min(92%, 400px);
+  }
+
+  [data-layout="portrait"] .footer {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

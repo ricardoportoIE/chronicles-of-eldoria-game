@@ -2,12 +2,17 @@ import { AudioManager } from "./game/AudioManager.js";
 import { CanvasGame } from "./game/CanvasGame.js";
 import { InputController } from "./game/InputController.js";
 import { loadGameAssets } from "./game/AssetLoader.js";
+import { getGameConfigForViewport } from "./game/config.js";
 import { readBestScore, saveBestScore } from "./game/storage.js";
 
 const byId = (id) => document.getElementById(id);
 const app = byId("app");
 const canvas = byId("gameCanvas");
 const audio = new AudioManager();
+const gameConfig = getGameConfigForViewport(window.innerWidth, window.innerHeight);
+canvas.width = gameConfig.world.width;
+canvas.height = gameConfig.world.height;
+app.dataset.layout = gameConfig.mode;
 let game;
 let levelBannerTimer;
 
@@ -147,6 +152,7 @@ async function initialize() {
       assets,
       audio,
       input,
+      config: gameConfig,
       onUpdate: updateHud,
       onGameOver: finishGame,
       onLevel: announceLevel,

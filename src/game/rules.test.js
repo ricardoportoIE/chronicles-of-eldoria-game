@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { GameSession } from "./GameSession.js";
-import { GAME_CONFIG } from "./config.js";
+import {
+  GAME_CONFIG,
+  PORTRAIT_GAME_CONFIG,
+  getGameConfigForViewport,
+} from "./config.js";
 import { Enemy } from "./entities.js";
 import {
   circleOverlapsAny,
@@ -13,6 +17,28 @@ import {
 import { readBestScore, saveBestScore } from "./storage.js";
 
 describe("progressão de Eldoria", () => {
+  it("seleciona uma arena 9:16 e reduz entidades no celular em retrato", () => {
+    const mobileConfig = getGameConfigForViewport(390, 844);
+
+    expect(mobileConfig).toBe(PORTRAIT_GAME_CONFIG);
+    expect(mobileConfig.world).toEqual({ width: 540, height: 960 });
+    expect(mobileConfig.hero.width).toBe(54);
+    expect(mobileConfig.enemy.width).toBe(69);
+    expect(mobileConfig.enemy.baseCount).toBe(4);
+    expect(
+      Math.max(...mobileConfig.enemy.hitboxOffsets.map(Math.abs)) +
+        mobileConfig.enemy.hitboxRadius,
+    ).toBeLessThanOrEqual(mobileConfig.enemy.width / 2);
+    expect(mobileConfig.enemy.hitboxRadius).toBeLessThanOrEqual(
+      mobileConfig.enemy.height / 2,
+    );
+  });
+
+  it("preserva a arena horizontal no desktop e no celular em paisagem", () => {
+    expect(getGameConfigForViewport(1440, 1000)).toBe(GAME_CONFIG);
+    expect(getGameConfigForViewport(844, 390)).toBe(GAME_CONFIG);
+  });
+
   it("aumenta o nível, a velocidade, os inimigos e o dano com o tempo", () => {
     expect(getDifficulty(0)).toMatchObject({
       level: 1,
