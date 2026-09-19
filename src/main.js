@@ -52,7 +52,7 @@ function toRoman(number) {
 function setGameState(state) {
   app.dataset.gameState = state;
   byId("pauseButton").disabled = !["playing", "paused"].includes(state);
-  byId("pauseButton").setAttribute("aria-label", state === "paused" ? "Retomar jogo" : "Pausar jogo");
+  byId("pauseButton").setAttribute("aria-label", state === "paused" ? "Resume game" : "Pause game");
 }
 
 function updateHud(snapshot) {
@@ -63,7 +63,7 @@ function updateHud(snapshot) {
   byId("scoreValue").textContent = formatNumber(snapshot.score);
   byId("timeValue").textContent = formatTime(snapshot.elapsed);
   byId("levelValue").textContent = toRoman(snapshot.difficulty.level);
-  byId("shotValue").textContent = snapshot.canShoot ? "PRONTA" : "RECARREGANDO";
+  byId("shotValue").textContent = snapshot.canShoot ? "READY" : "RECHARGING";
   byId("shotValue").style.color = snapshot.canShoot ? "#7fdf97" : "#d6a15a";
 }
 
@@ -72,7 +72,7 @@ function announceLevel(level) {
   byId("levelBannerValue").textContent = toRoman(level);
   byId("levelBanner").classList.remove("is-visible");
   requestAnimationFrame(() => byId("levelBanner").classList.add("is-visible"));
-  byId("liveStatus").textContent = `Capítulo ${level}. A tempestade ficou mais forte.`;
+  byId("liveStatus").textContent = `Chapter ${level}. The storm has grown stronger.`;
   levelBannerTimer = setTimeout(() => byId("levelBanner").classList.remove("is-visible"), 2100);
 }
 
@@ -82,8 +82,8 @@ function finishGame(snapshot) {
   byId("finalScore").textContent = formatNumber(snapshot.score);
   byId("bestScore").textContent = formatNumber(best);
   byId("finalMessage").textContent = snapshot.score > previousBest
-    ? "Um novo recorde foi gravado nos salões de Eldoria."
-    : "Eldoria se lembrará da sua resistência.";
+    ? "A new record has been inscribed in the halls of Eldoria."
+    : "Eldoria will remember your courage.";
   setGameState("gameover");
   byId("restartButton").focus();
 }
@@ -116,7 +116,7 @@ function bindInterface(input) {
   byId("soundButton").addEventListener("click", () => {
     const muted = audio.toggleMuted();
     byId("soundButton").querySelector("span").textContent = muted ? "×" : "♫";
-    byId("soundButton").setAttribute("aria-label", muted ? "Ativar som" : "Desativar som");
+    byId("soundButton").setAttribute("aria-label", muted ? "Unmute sound" : "Mute sound");
   });
 
   byId("fullscreenButton").addEventListener("click", async () => {
@@ -124,7 +124,7 @@ function bindInterface(input) {
       if (document.fullscreenElement) await document.exitFullscreen();
       else await document.documentElement.requestFullscreen();
     } catch {
-      byId("liveStatus").textContent = "Tela cheia não está disponível neste navegador.";
+      byId("liveStatus").textContent = "Full screen is not available in this browser.";
     }
   });
 
@@ -142,7 +142,7 @@ function bindInterface(input) {
       try {
         button.setPointerCapture?.(event.pointerId);
       } catch {
-        // Alguns WebViews não oferecem captura para eventos touch sintéticos.
+        // Some WebViews do not support pointer capture for synthetic touch events.
       }
       input.setVirtualKey(button.dataset.key, true);
       button.classList.add("is-active");
@@ -189,8 +189,8 @@ async function initialize() {
     console.error(error);
     byId("loadingOverlay").innerHTML = `
       <div class="modal-card">
-        <h2>As runas não despertaram</h2>
-        <p>Recarregue a página para tentar abrir Eldoria novamente.</p>
+        <h2>The runes did not awaken</h2>
+        <p>Reload the page to try opening Eldoria again.</p>
       </div>`;
   }
 }

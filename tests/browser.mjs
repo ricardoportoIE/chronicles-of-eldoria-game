@@ -21,7 +21,7 @@ async function assertAccessible(page, label) {
   });
 
   if (violations.length) {
-    throw new Error(`Acessibilidade (${label}): ${JSON.stringify(violations)}`);
+    throw new Error(`Accessibility (${label}): ${JSON.stringify(violations)}`);
   }
 }
 
@@ -30,11 +30,14 @@ const browserCandidates = [
   "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
   "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "/usr/bin/google-chrome",
+  "/usr/bin/chromium",
+  "/usr/bin/chromium-browser",
 ].filter(Boolean);
 
 const executablePath = browserCandidates.find(existsSync);
 if (!executablePath) {
-  throw new Error("Nenhum navegador Chromium foi encontrado para o teste E2E.");
+  throw new Error("No Chromium browser was found for the end-to-end test.");
 }
 
 const server = await createServer({
@@ -68,51 +71,51 @@ try {
 
   await page.goto(url, { waitUntil: "networkidle" });
   await page.locator("#app[data-game-state='ready']").waitFor();
-  await assertAccessible(page, "desktop pronto");
-  await page.getByRole("button", { name: "Abrir as crônicas" }).click();
+  await assertAccessible(page, "desktop ready");
+  await page.getByRole("button", { name: "Open the chronicles" }).click();
   await page.locator("#app[data-game-state='playing']").waitFor();
 
   const scoreBefore = Number(await page.locator("#scoreValue").textContent());
   await page.waitForTimeout(350);
   const scoreAfter = Number(await page.locator("#scoreValue").textContent());
-  if (scoreAfter <= scoreBefore) throw new Error("A pontuação de sobrevivência não avançou.");
+  if (scoreAfter <= scoreBefore) throw new Error("The survival score did not increase.");
 
   await page.keyboard.down("Space");
   await page.waitForTimeout(80);
-  if ((await page.locator("#shotValue").textContent()) !== "RECARREGANDO") {
-    throw new Error("O disparo não iniciou a recarga.");
+  if ((await page.locator("#shotValue").textContent()) !== "RECHARGING") {
+    throw new Error("The shot did not start its cooldown.");
   }
   await page.keyboard.up("Space");
 
   await page.keyboard.press("p");
   await page.locator("#app[data-game-state='paused']").waitFor();
   if ((await page.locator(":focus").getAttribute("id")) !== "resumeButton") {
-    throw new Error("A pausa não direcionou o foco ao botão de retomada.");
+    throw new Error("Pausing did not move focus to the resume button.");
   }
-  await assertAccessible(page, "desktop pausado");
-  await page.getByRole("button", { name: "Retomar jornada" }).click();
+  await assertAccessible(page, "desktop paused");
+  await page.getByRole("button", { name: "Resume journey" }).click();
   await page.locator("#app[data-game-state='playing']").waitFor();
   if ((await page.locator(":focus").getAttribute("id")) !== "gameCanvas") {
-    throw new Error("O retorno ao jogo não devolveu o foco à arena.");
+    throw new Error("Resuming the game did not return focus to the arena.");
   }
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload({ waitUntil: "networkidle" });
   await page.locator("#app[data-game-state='ready'][data-layout='portrait']").waitFor();
-  await assertAccessible(page, "mobile pronto");
+  await assertAccessible(page, "mobile ready");
 
   const canvasSize = await page.locator("#gameCanvas").evaluate((canvas) => ({
     width: canvas.width,
     height: canvas.height,
   }));
   if (canvasSize.width !== 540 || canvasSize.height !== 960) {
-    throw new Error(`Arena mobile inválida: ${canvasSize.width}x${canvasSize.height}.`);
+    throw new Error(`Invalid mobile arena: ${canvasSize.width}x${canvasSize.height}.`);
   }
 
   const canvasFrame = await page.locator(".canvas-frame").boundingBox();
   const renderedRatio = canvasFrame.width / canvasFrame.height;
   if (Math.abs(renderedRatio - 9 / 16) > 0.01) {
-    throw new Error(`Proporção mobile inválida: ${renderedRatio}.`);
+    throw new Error(`Invalid mobile aspect ratio: ${renderedRatio}.`);
   }
 
   const pageMetrics = await page.evaluate(() => ({
@@ -122,18 +125,18 @@ try {
     documentHeight: document.documentElement.scrollHeight,
   }));
   if (pageMetrics.documentWidth > pageMetrics.viewportWidth + 1) {
-    throw new Error("A interface mobile exige rolagem horizontal.");
+    throw new Error("The mobile interface requires horizontal scrolling.");
   }
   if (pageMetrics.documentHeight > pageMetrics.viewportHeight + 1) {
-    throw new Error("A interface mobile exige rolagem vertical.");
+    throw new Error("The mobile interface requires vertical scrolling.");
   }
 
-  await page.getByRole("button", { name: "Abrir as crônicas" }).click();
+  await page.getByRole("button", { name: "Open the chronicles" }).click();
   await page.locator("#app[data-game-state='playing']").waitFor();
   const touchDisplay = await page.locator(".touch-controls").evaluate(
     (element) => getComputedStyle(element).display,
   );
-  if (touchDisplay !== "flex") throw new Error("Os controles de toque não apareceram no viewport mobile.");
+  if (touchDisplay !== "flex") throw new Error("Touch controls were not displayed in the mobile viewport.");
 
   const canvas = page.locator("#gameCanvas");
   const canvasBox = await canvas.boundingBox();
@@ -156,7 +159,7 @@ try {
     clientY: touchOrigin.y - 35,
   });
   if (!(await page.locator("#touchStick").evaluate((element) => element.classList.contains("is-active")))) {
-    throw new Error("O joystick direto na arena não foi ativado.");
+    throw new Error("The direct arena joystick was not activated.");
   }
   await canvas.dispatchEvent("pointerup", {
     pointerId: 11,
@@ -173,39 +176,39 @@ try {
       ),
   );
   if (!contextMenuPrevented) {
-    throw new Error("A pressão longa ainda pode abrir o menu do navegador.");
+    throw new Error("A long press can still open the browser context menu.");
   }
 
-  const fireButton = page.getByRole("button", { name: "Disparar luz arcana" });
+  const fireButton = page.getByRole("button", { name: "Fire arcane light" });
   await fireButton.dispatchEvent("pointerdown", { pointerId: 1 });
   await page.waitForTimeout(80);
-  if ((await page.locator("#shotValue").textContent()) !== "RECARREGANDO") {
-    throw new Error("O disparo por toque não iniciou a recarga.");
+  if ((await page.locator("#shotValue").textContent()) !== "RECHARGING") {
+    throw new Error("The touch shot did not start its cooldown.");
   }
   await fireButton.dispatchEvent("pointerup", { pointerId: 1 });
 
-  const upButton = page.getByRole("button", { name: "Mover para cima" });
+  const upButton = page.getByRole("button", { name: "Move up" });
   await upButton.dispatchEvent("pointerdown", { pointerId: 5 });
   if (!(await upButton.evaluate((button) => button.classList.contains("is-active")))) {
-    throw new Error("O direcional touch não refletiu o estado pressionado.");
+    throw new Error("The touch directional pad did not reflect its pressed state.");
   }
   await upButton.dispatchEvent("pointercancel", { pointerId: 5 });
   if (await upButton.evaluate((button) => button.classList.contains("is-active"))) {
-    throw new Error("O direcional touch permaneceu ativo após cancelamento.");
+    throw new Error("The touch directional pad remained active after cancellation.");
   }
 
   await page.keyboard.press("Escape");
   await page.locator("#app[data-game-state='paused']").waitFor();
-  await assertAccessible(page, "mobile pausado");
+  await assertAccessible(page, "mobile paused");
 
   if (browserErrors.length) {
-    throw new Error(`Erros no navegador: ${browserErrors.join(" | ")}`);
+    throw new Error(`Browser errors: ${browserErrors.join(" | ")}`);
   }
   if (unexpectedRequests.length) {
-    throw new Error(`Requisições externas inesperadas: ${unexpectedRequests.join(" | ")}`);
+    throw new Error(`Unexpected external requests: ${unexpectedRequests.join(" | ")}`);
   }
 
-  console.log("E2E aprovado: desktop/mobile, teclado, touch e WCAG A/AA sem violações.");
+  console.log("E2E passed: desktop/mobile, keyboard, touch and WCAG A/AA without violations.");
 } finally {
   await browser?.close();
   await server.close();

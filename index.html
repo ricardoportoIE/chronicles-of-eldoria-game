@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Chronicles of Eldoria: sobreviva à tempestade de fogo e proteja a chama ancestral." />
+    <meta name="description" content="Chronicles of Eldoria: survive the firestorm and protect the ancestral flame." />
     <meta name="theme-color" content="#070b12" />
     <meta name="referrer" content="no-referrer" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self' ws:; object-src 'none'; base-uri 'self'; form-action 'none'" />
@@ -21,92 +21,92 @@
           <span><strong>Chronicles</strong><small>of Eldoria</small></span>
         </div>
         <div class="topbar__actions">
-          <button class="icon-button" id="pauseButton" type="button" aria-label="Pausar jogo" title="Pausar (P)"><span aria-hidden="true">Ⅱ</span></button>
-          <button class="icon-button" id="soundButton" type="button" aria-label="Desativar som" title="Som"><span aria-hidden="true">♫</span></button>
-          <button class="icon-button" id="fullscreenButton" type="button" aria-label="Tela cheia" title="Tela cheia"><span aria-hidden="true">⤢</span></button>
-          <a class="github-link" href="https://github.com/ricard00liveira/lpaw_2024_game" target="_blank" rel="noreferrer" aria-label="Abrir repositório no GitHub">
-            <span id="realmMark" aria-hidden="true"></span><span class="github-link__label">Código-fonte</span>
+          <button class="icon-button" id="pauseButton" type="button" aria-label="Pause game" title="Pause (P)"><span aria-hidden="true">Ⅱ</span></button>
+          <button class="icon-button" id="soundButton" type="button" aria-label="Mute sound" title="Sound"><span aria-hidden="true">♫</span></button>
+          <button class="icon-button" id="fullscreenButton" type="button" aria-label="Full screen" title="Full screen"><span aria-hidden="true">⤢</span></button>
+          <a class="github-link" href="https://github.com/ricardoportoIE/chronicles-of-eldoria-game" target="_blank" rel="noreferrer" aria-label="Open the GitHub repository">
+            <span id="realmMark" aria-hidden="true"></span><span class="github-link__label">Source code</span>
           </a>
         </div>
       </header>
 
-      <main class="game-shell" aria-label="Jogo Chronicles of Eldoria">
-        <section class="arena" aria-label="Arena de Eldoria">
-          <div class="hud" aria-label="Estado da partida">
+      <main class="game-shell" aria-label="Chronicles of Eldoria game">
+        <section class="arena" aria-label="Eldoria arena">
+          <div class="hud" aria-label="Current game status">
             <div class="hud__life">
-              <span class="hud__label">Vitalidade</span>
-              <div class="life-bar" role="progressbar" aria-label="Vitalidade" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><span id="lifeFill"></span></div>
+              <span class="hud__label">Vitality</span>
+              <div class="life-bar" role="progressbar" aria-label="Vitality" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><span id="lifeFill"></span></div>
               <strong id="lifeValue">100</strong>
             </div>
-            <div class="hud__stat"><span class="hud__label">Crônicas</span><strong id="scoreValue">000000</strong></div>
-            <div class="hud__stat hud__stat--center"><span class="hud__label">Capítulo</span><strong id="levelValue">I</strong></div>
-            <div class="hud__stat"><span class="hud__label">Resistência</span><strong id="timeValue">00:00</strong></div>
-            <div class="hud__stat hud__shot"><span class="hud__label">Luz arcana</span><strong id="shotValue">PRONTA</strong></div>
+            <div class="hud__stat"><span class="hud__label">Chronicle</span><strong id="scoreValue">000000</strong></div>
+            <div class="hud__stat hud__stat--center"><span class="hud__label">Chapter</span><strong id="levelValue">I</strong></div>
+            <div class="hud__stat"><span class="hud__label">Endurance</span><strong id="timeValue">00:00</strong></div>
+            <div class="hud__stat hud__shot"><span class="hud__label">Arcane light</span><strong id="shotValue">READY</strong></div>
           </div>
 
           <div class="canvas-frame">
-            <canvas id="gameCanvas" width="960" height="600" tabindex="0" aria-label="Arena. Use W A S D, setas ou arraste a tela para mover; use espaço ou o botão Luz para disparar."></canvas>
+            <canvas id="gameCanvas" width="960" height="600" tabindex="0" aria-label="Arena. Use W A S D, the arrow keys or drag the screen to move; use Space or the Light button to fire."></canvas>
             <div class="touch-stick" id="touchStick" aria-hidden="true"><span></span></div>
 
             <div class="game-overlay game-overlay--loading" id="loadingOverlay">
               <img src="/loading.webp" alt="" width="72" height="50" />
-              <p>Despertando as runas…</p>
+              <p>Awakening the runes…</p>
               <div class="loading-track" aria-hidden="true"><span id="loadingFill"></span></div>
             </div>
 
             <div class="game-overlay game-overlay--intro" id="introOverlay">
               <article class="story-panel">
-                <p class="eyebrow">Prólogo · A chama ancestral</p>
-                <h1>O último guardião de Eldoria</h1>
-                <p>O céu se rompeu, e as sentinelas de fogo cercaram o reino. Sua missão é resistir: desvie das chamas e use a luz arcana para convertê-las em vida.</p>
-                <div class="instructions" aria-label="Controles">
-                  <span><kbd>WASD</kbd><small>mover</small></span>
-                  <span><kbd>ESPAÇO</kbd><small>disparar</small></span>
-                  <span><kbd>P</kbd><small>pausar</small></span>
+                <p class="eyebrow">Prologue · The ancestral flame</p>
+                <h1>The last guardian of Eldoria</h1>
+                <p>The sky has fractured and fire sentinels surround the realm. Your task is to endure: evade the flames and use arcane light to turn them into life.</p>
+                <div class="instructions" aria-label="Controls">
+                  <span><kbd>WASD</kbd><small>move</small></span>
+                  <span><kbd>SPACE</kbd><small>fire</small></span>
+                  <span><kbd>P</kbd><small>pause</small></span>
                 </div>
-                <p class="touch-hint">Arraste em qualquer ponto livre da arena ou use o direcional.</p>
-                <p class="story-panel__warning">A tempestade ganha força a cada novo capítulo.</p>
-                <button class="primary-button" id="startButton" type="button">Abrir as crônicas</button>
+                <p class="touch-hint">Drag anywhere on the open arena or use the directional pad.</p>
+                <p class="story-panel__warning">The storm grows stronger with every chapter.</p>
+                <button class="primary-button" id="startButton" type="button">Open the chronicles</button>
               </article>
             </div>
 
             <div class="game-overlay game-overlay--pause" id="pauseOverlay">
               <article class="modal-card">
-                <p class="eyebrow">O tempo foi suspenso</p><h2>Crônica pausada</h2>
-                <p>Respire. A tempestade aguarda seu retorno.</p>
-                <button class="primary-button" id="resumeButton" type="button">Retomar jornada</button>
-                <button class="text-button" id="pauseRestartButton" type="button">Recomeçar</button>
+                <p class="eyebrow">Time stands still</p><h2>Chronicle paused</h2>
+                <p>Take a breath. The storm awaits your return.</p>
+                <button class="primary-button" id="resumeButton" type="button">Resume journey</button>
+                <button class="text-button" id="pauseRestartButton" type="button">Begin again</button>
               </article>
             </div>
 
             <div class="game-overlay game-overlay--gameover" id="gameoverOverlay">
               <article class="modal-card">
-                <p class="eyebrow">A chama se apagou</p><h2>Seu nome entrou nas crônicas</h2>
+                <p class="eyebrow">The flame has faded</p><h2>Your name has entered the chronicles</h2>
                 <div class="final-stats">
-                  <span><small>Pontuação</small><strong id="finalScore">0</strong></span>
-                  <span><small>Recorde</small><strong id="bestScore">0</strong></span>
+                  <span><small>Score</small><strong id="finalScore">0</strong></span>
+                  <span><small>Best</small><strong id="bestScore">0</strong></span>
                 </div>
-                <p id="finalMessage">Eldoria se lembrará da sua resistência.</p>
-                <button class="primary-button" id="restartButton" type="button">Tentar novamente</button>
+                <p id="finalMessage">Eldoria will remember your courage.</p>
+                <button class="primary-button" id="restartButton" type="button">Try again</button>
               </article>
             </div>
 
-            <div class="level-banner" id="levelBanner" role="status" aria-live="polite"><small>Novo capítulo</small><strong id="levelBannerValue">II</strong></div>
+            <div class="level-banner" id="levelBanner" role="status" aria-live="polite"><small>New chapter</small><strong id="levelBannerValue">II</strong></div>
 
-            <div class="touch-controls" aria-label="Controles de toque">
+            <div class="touch-controls" aria-label="Touch controls">
               <div class="touch-dpad">
-                <button data-key="w" class="touch-button touch-button--up" aria-label="Mover para cima">▲</button>
-                <button data-key="a" class="touch-button touch-button--left" aria-label="Mover para a esquerda">◀</button>
-                <button data-key="s" class="touch-button touch-button--down" aria-label="Mover para baixo">▼</button>
-                <button data-key="d" class="touch-button touch-button--right" aria-label="Mover para a direita">▶</button>
+                <button data-key="w" class="touch-button touch-button--up" aria-label="Move up">▲</button>
+                <button data-key="a" class="touch-button touch-button--left" aria-label="Move left">◀</button>
+                <button data-key="s" class="touch-button touch-button--down" aria-label="Move down">▼</button>
+                <button data-key="d" class="touch-button touch-button--right" aria-label="Move right">▶</button>
               </div>
-              <button data-key=" " class="touch-button touch-button--fire" aria-label="Disparar luz arcana">Luz</button>
+              <button data-key=" " class="touch-button touch-button--fire" aria-label="Fire arcane light">Light</button>
             </div>
           </div>
         </section>
       </main>
 
-      <footer class="footer"><span>Uma experiência em JavaScript, Canvas 2D e Three.js.</span><span>Ricardo Porto de Oliveira · IFSul Pelotas</span></footer>
+      <footer class="footer"><span>An experience built with JavaScript, Canvas 2D and Three.js.</span><span>Ricardo Porto de Oliveira · IFSul Pelotas</span></footer>
       <p class="sr-only" id="liveStatus" aria-live="polite"></p>
     </div>
     <script type="module" src="/src/main.js"></script>

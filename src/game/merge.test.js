@@ -21,8 +21,8 @@ function createSeededRandom(seed = 0xe1d0) {
   };
 }
 
-describe("fusão vetorial de inimigos", () => {
-  it("resolve forças opostas sem parar ou gerar valores inválidos", () => {
+describe("vector-based enemy merging", () => {
+  it("resolves opposing forces without stopping or producing invalid values", () => {
     const rightward = createEnemy({ id: 1, angle: 0 });
     const leftward = createEnemy({ id: 2, angle: Math.PI });
 
@@ -33,7 +33,7 @@ describe("fusão vetorial de inimigos", () => {
     expect(Math.hypot(rightward.vx, rightward.vy)).toBeCloseTo(100);
   });
 
-  it("limita fusões sucessivas e restaura o tamanho ao reaparecer", () => {
+  it("caps successive merges and restores size on respawn", () => {
     const enemy = createEnemy({ id: 1 });
 
     enemy.mergeWith(createEnemy({ id: 2 }), 100);
@@ -47,7 +47,7 @@ describe("fusão vetorial de inimigos", () => {
     expect(enemy.scale).toBe(1);
   });
 
-  it("considera apenas inimigos que já entraram na arena", () => {
+  it("considers only enemies that have entered the arena", () => {
     const enemy = createEnemy({ id: 1, x: -1 });
     expect(enemy.isInArena()).toBe(false);
     enemy.x = 0;
@@ -56,7 +56,7 @@ describe("fusão vetorial de inimigos", () => {
     expect(enemy.isInArena()).toBe(false);
   });
 
-  it("preserva velocidade, escala e hitbox em 500 combinações", () => {
+  it("preserves speed, scale and hitbox across 500 combinations", () => {
     const random = createSeededRandom();
     const scales = [1, 2, 4];
 

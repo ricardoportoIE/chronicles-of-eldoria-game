@@ -1,5 +1,7 @@
 # Chronicles of Eldoria
 
+[![Quality gate](https://github.com/ricardoportoIE/chronicles-of-eldoria-game/actions/workflows/quality.yml/badge.svg)](https://github.com/ricardoportoIE/chronicles-of-eldoria-game/actions/workflows/quality.yml)
+
 > A modern, responsive 2D survival game built with vanilla JavaScript, Canvas 2D and Three.js — backed by measurable standards for testing, accessibility, performance and front-end security.
 
 Chronicles of Eldoria places the player in the role of the realm's final guardian. Fire sentinels have surrounded the kingdom, and survival depends on evasion, precision and the use of arcane light to turn hostile energy into life.
@@ -73,7 +75,7 @@ The quality gate currently includes:
 
 | Area | Automated verification |
 | --- | --- |
-| Unit and component behaviour | 59 Vitest tests |
+| Unit and component behaviour | 60 Vitest tests |
 | Game-core coverage | 100% statements, branches, functions and lines |
 | End-to-end journeys | Playwright Core in a real Chromium browser |
 | Accessibility | axe-core checks for WCAG 2 A/AA, 2.1 A/AA and 2.2 AA |
@@ -84,7 +86,7 @@ The quality gate currently includes:
 
 The latest local production baseline completed at approximately **144 fps** in both automated viewport profiles, with an average frame time of **6.94 ms**. Loading completed in **1.22 s on desktop** and **0.74 s on mobile**. These figures are environment-dependent; the committed performance budgets are the repeatable acceptance criteria.
 
-The full testing strategy and performance thresholds are documented in [QUALIDADE.md](./QUALIDADE.md).
+The full testing strategy and performance thresholds are documented in [QUALITY.md](./QUALITY.md).
 
 ## Modernisation highlights
 
@@ -98,7 +100,7 @@ The original implementation was progressively refactored rather than replaced, r
 6. Established comprehensive unit, browser, accessibility, performance and security testing.
 7. Added a restrictive browser security policy and a single repeatable quality gate.
 
-The staged development plan is available in [PLANO_DE_TRABALHO.md](./PLANO_DE_TRABALHO.md), and the mobile design study is recorded in [CROQUI_MOBILE.md](./CROQUI_MOBILE.md).
+The staged development plan is available in [WORK_PLAN.md](./WORK_PLAN.md), and the mobile design study is recorded in [MOBILE_DESIGN.md](./MOBILE_DESIGN.md).
 
 ## Architecture
 
@@ -141,8 +143,8 @@ The `requestAnimationFrame` loop uses a capped time delta to keep the simulation
 - Microsoft Edge, Google Chrome or another Chromium executable for browser tests
 
 ```bash
-git clone https://github.com/ricard00liveira/lpaw_2024_game.git
-cd lpaw_2024_game
+git clone https://github.com/ricardoportoIE/chronicles-of-eldoria-game.git
+cd chronicles-of-eldoria-game
 npm install
 npm run dev
 ```
@@ -167,6 +169,6 @@ The browser tests automatically look for Edge or Chrome in their standard Window
 
 ## Author
 
-**Ricardo Porto de Oliveira** — Technology in Internet Systems, IFSul Câmpus Pelotas
+**Ricardo Porto de Oliveira** — Technology in Internet Systems, IFSul Pelotas Campus
 
 Original game and assets created as an academic project in 2024. The modernised edition remains faithful to the original narrative whilst demonstrating current front-end engineering practices.

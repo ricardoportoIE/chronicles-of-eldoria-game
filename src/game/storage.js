@@ -16,7 +16,7 @@ export function saveBestScore(score, storage = globalThis.localStorage) {
   try {
     storage?.setItem(BEST_SCORE_KEY, String(bestScore));
   } catch {
-    // O jogo continua funcional quando o armazenamento está indisponível.
+    // The game remains playable when browser storage is unavailable.
   }
 
   return bestScore;

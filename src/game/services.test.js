@@ -9,8 +9,8 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe("carregamento de recursos", () => {
-  it("carrega todas as imagens e reporta progresso", async () => {
+describe("asset loading", () => {
+  it("loads every image and reports progress", async () => {
     class FakeImage extends EventTarget {
       set src(value) {
         this.source = value;
@@ -25,7 +25,7 @@ describe("carregamento de recursos", () => {
     expect(progress).toHaveBeenLastCalledWith(1);
   });
 
-  it("usa callback de progresso padrão", async () => {
+  it("uses the default progress callback", async () => {
     class FakeImage extends EventTarget {
       set src(value) {
         queueMicrotask(() => this.dispatchEvent(new Event("load")));
@@ -35,19 +35,19 @@ describe("carregamento de recursos", () => {
     await expect(loadGameAssets()).resolves.toHaveProperty("hero");
   });
 
-  it("propaga falha de imagem", async () => {
+  it("propagates an image failure", async () => {
     class BrokenImage extends EventTarget {
       set src(value) {
         queueMicrotask(() => this.dispatchEvent(new Event("error")));
       }
     }
     vi.stubGlobal("Image", BrokenImage);
-    await expect(loadGameAssets()).rejects.toThrow("Não foi possível carregar");
+    await expect(loadGameAssets()).rejects.toThrow("Could not load");
   });
 });
 
-describe("áudio", () => {
-  it("prepara, toca, reinicia, pausa e silencia todos os sons", async () => {
+describe("audio", () => {
+  it("prepares, plays, restarts, pauses and mutes every sound", async () => {
     const instances = [];
     class FakeAudio {
       constructor(source) {
@@ -79,10 +79,10 @@ describe("áudio", () => {
     expect(audio.sounds.theme.currentTime).toBe(0);
   });
 
-  it("não interrompe o jogo quando o navegador recusa reprodução", async () => {
+  it("does not interrupt the game when the browser rejects playback", async () => {
     class RejectedAudio {
       constructor() {
-        this.play = vi.fn(() => Promise.reject(new Error("bloqueado")));
+        this.play = vi.fn(() => Promise.reject(new Error("blocked")));
         this.pause = vi.fn();
       }
     }
@@ -93,8 +93,8 @@ describe("áudio", () => {
   });
 });
 
-describe("sessão e armazenamento defensivos", () => {
-  it("cobre estados inativos, retomada, snapshot e limites", () => {
+describe("defensive session and storage behaviour", () => {
+  it("covers inactive states, resuming, snapshots and limits", () => {
     const session = new GameSession();
     expect(session.registerHit()).toEqual({ heal: 0, points: 0 });
     expect(session.takeDamage()).toBe(0);
@@ -110,14 +110,14 @@ describe("sessão e armazenamento defensivos", () => {
     expect(session.getSnapshot()).toMatchObject({ status: "playing", life: 100 });
   });
 
-  it("retorna zero e continua quando storage falha ou contém lixo", () => {
+  it("returns zero and continues when storage fails or contains invalid data", () => {
     const broken = {
-      getItem: () => { throw new Error("bloqueado"); },
-      setItem: () => { throw new Error("bloqueado"); },
+      getItem: () => { throw new Error("blocked"); },
+      setItem: () => { throw new Error("blocked"); },
     };
     expect(readBestScore(broken)).toBe(0);
     expect(saveBestScore(-20, broken)).toBe(0);
-    expect(saveBestScore("inválido", broken)).toBe(0);
+    expect(saveBestScore("invalid", broken)).toBe(0);
     expect(readBestScore({ getItem: () => "-2" })).toBe(0);
     expect(readBestScore({ getItem: () => "12" })).toBe(12);
   });

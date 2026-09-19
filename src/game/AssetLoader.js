@@ -11,7 +11,7 @@ function loadImage(source) {
     image.addEventListener("load", () => resolve(image), { once: true });
     image.addEventListener(
       "error",
-      () => reject(new Error(`Não foi possível carregar ${source}`)),
+      () => reject(new Error(`Could not load ${source}`)),
       { once: true },
     );
     image.src = source;

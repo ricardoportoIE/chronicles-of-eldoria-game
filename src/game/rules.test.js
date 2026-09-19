@@ -17,8 +17,8 @@ import {
 } from "./rules.js";
 import { readBestScore, saveBestScore } from "./storage.js";
 
-describe("progressão de Eldoria", () => {
-  it("seleciona uma arena 9:16 e reduz entidades no celular em retrato", () => {
+describe("Eldoria progression", () => {
+  it("selects a 9:16 arena and scales entities down on portrait mobile", () => {
     const mobileConfig = getGameConfigForViewport(390, 844);
 
     expect(mobileConfig).toBe(PORTRAIT_GAME_CONFIG);
@@ -35,12 +35,12 @@ describe("progressão de Eldoria", () => {
     );
   });
 
-  it("preserva a arena horizontal no desktop e no celular em paisagem", () => {
+  it("preserves the landscape arena on desktop and landscape mobile", () => {
     expect(getGameConfigForViewport(1440, 1000)).toBe(GAME_CONFIG);
     expect(getGameConfigForViewport(844, 390)).toBe(GAME_CONFIG);
   });
 
-  it("aumenta o nível, a velocidade, os inimigos e o dano com o tempo", () => {
+  it("increases level, speed, enemy count and damage over time", () => {
     expect(getDifficulty(0)).toMatchObject({
       level: 1,
       enemyCount: 5,
@@ -55,7 +55,7 @@ describe("progressão de Eldoria", () => {
     });
   });
 
-  it("limita cura, combo e velocidade aos valores de configuração", () => {
+  it("caps healing, combo and speed at their configured values", () => {
     expect(getHealAmount(0)).toBe(6);
     expect(getHealAmount(9_000)).toBe(12);
     expect(getHitScore(0, 99)).toBe(800);
@@ -63,8 +63,8 @@ describe("progressão de Eldoria", () => {
   });
 });
 
-describe("controle touch", () => {
-  it("ignora pequenos movimentos dentro da zona morta", () => {
+describe("touch controls", () => {
+  it("ignores small movements inside the dead zone", () => {
     expect(getTouchVector(5, 5)).toEqual({
       x: 0,
       y: 0,
@@ -73,7 +73,7 @@ describe("controle touch", () => {
     });
   });
 
-  it("produz direção analógica e limita o deslocamento visual", () => {
+  it("produces an analogue direction and caps visual displacement", () => {
     const halfStrength = getTouchVector(20, 0);
     expect(halfStrength.x).toBeCloseTo(0.5);
     expect(halfStrength.y).toBe(0);
@@ -84,8 +84,8 @@ describe("controle touch", () => {
   });
 });
 
-describe("sessão de jogo", () => {
-  it("respeita recarga, pausa e delta máximo", () => {
+describe("game session", () => {
+  it("respects cooldown, pause and maximum delta", () => {
     const session = new GameSession();
     session.start();
 
@@ -98,7 +98,7 @@ describe("sessão de jogo", () => {
     expect(session.elapsed).toBe(0.1);
   });
 
-  it("encadeia acertos, cura o herói e encerra ao zerar a vida", () => {
+  it("chains hits, heals the hero and ends when life reaches zero", () => {
     const session = new GameSession();
     session.start();
     session.life = 50;
@@ -113,7 +113,7 @@ describe("sessão de jogo", () => {
     expect(session.status).toBe("gameover");
   });
 
-  it("encerra o combo fora da janela e ignora dano durante a invulnerabilidade", () => {
+  it("ends a combo outside its window and ignores damage whilst invulnerable", () => {
     const session = new GameSession();
     session.start();
     session.registerHit();
@@ -127,8 +127,8 @@ describe("sessão de jogo", () => {
   });
 });
 
-describe("colisões e persistência", () => {
-  it("detecta sobreposição circular inclusive no limite", () => {
+describe("collisions and persistence", () => {
+  it("detects circular overlap including at the boundary", () => {
     expect(
       circlesOverlap(
         { x: 0, y: 0, radius: 10 },
@@ -137,7 +137,7 @@ describe("colisões e persistência", () => {
     ).toBe(true);
   });
 
-  it("detecta colisão ao longo de uma hitbox composta", () => {
+  it("detects collision along a composite hitbox", () => {
     const hitbox = [-32, -16, 0, 16, 32].map((x) => ({
       x,
       y: 0,
@@ -148,7 +148,7 @@ describe("colisões e persistência", () => {
     expect(circleOverlapsAny({ x: 0, y: 15, radius: 2 }, hitbox)).toBe(false);
   });
 
-  it("mantém a hitbox inimiga menor que o sprite", () => {
+  it("keeps the enemy hitbox smaller than its sprite", () => {
     const halfHitboxWidth =
       Math.max(...GAME_CONFIG.enemy.hitboxOffsets.map(Math.abs)) +
       GAME_CONFIG.enemy.hitboxRadius;
@@ -159,7 +159,7 @@ describe("colisões e persistência", () => {
     );
   });
 
-  it("detecta encontro entre hitboxes compostas", () => {
+  it("detects contact between composite hitboxes", () => {
     const firstShape = [{ x: 0, y: 0, radius: 12 }];
     const secondShape = [{ x: 20, y: 0, radius: 12 }];
     const distantShape = [{ x: 30, y: 0, radius: 12 }];
@@ -168,7 +168,7 @@ describe("colisões e persistência", () => {
     expect(shapesOverlap(firstShape, distantShape)).toBe(false);
   });
 
-  it("funde duas chamas na direção da força resultante", () => {
+  it("merges two flames in the direction of the resultant force", () => {
     const upward = new Enemy(1, 100);
     const rightward = new Enemy(2, 100);
     upward.x = 100;
@@ -187,7 +187,7 @@ describe("colisões e persistência", () => {
     expect(upward.vy).toBeCloseTo(-Math.SQRT1_2 * 100);
   });
 
-  it("dobra sprite e hitbox juntos sem ultrapassar a arte", () => {
+  it("doubles sprite and hitbox together without exceeding the artwork", () => {
     const enemy = new Enemy(1, 100);
     enemy.x = 0;
     enemy.y = 0;
@@ -206,7 +206,7 @@ describe("colisões e persistência", () => {
     );
   });
 
-  it("mantém somente o maior recorde", () => {
+  it("retains only the highest score", () => {
     const values = new Map();
     const storage = {
       getItem: (key) => values.get(key) ?? null,

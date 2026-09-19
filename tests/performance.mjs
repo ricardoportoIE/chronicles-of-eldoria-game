@@ -7,10 +7,13 @@ const browserCandidates = [
   "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
   "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "/usr/bin/google-chrome",
+  "/usr/bin/chromium",
+  "/usr/bin/chromium-browser",
 ].filter(Boolean);
 
 const executablePath = browserCandidates.find(existsSync);
-if (!executablePath) throw new Error("Nenhum navegador Chromium foi encontrado.");
+if (!executablePath) throw new Error("No Chromium browser was found.");
 
 const budgets = {
   loadMs: 2500,
@@ -31,7 +34,7 @@ async function measure(page, url, label) {
   await page.goto(url, { waitUntil: "networkidle" });
   await page.locator("#app[data-game-state='ready']").waitFor();
   const loadMs = performance.now() - startedAt;
-  await page.getByRole("button", { name: "Abrir as crônicas" }).click();
+  await page.getByRole("button", { name: "Open the chronicles" }).click();
   await page.locator("#app[data-game-state='playing']").waitFor();
 
   const result = await page.evaluate(async () => {
@@ -76,14 +79,14 @@ async function measure(page, url, label) {
   };
 
   const failures = [
-    [metrics.loadMs > budgets.loadMs, `carregamento ${metrics.loadMs}ms`],
-    [metrics.averageFrameMs > budgets.averageFrameMs, `quadro médio ${metrics.averageFrameMs}ms`],
+    [metrics.loadMs > budgets.loadMs, `load time ${metrics.loadMs}ms`],
+    [metrics.averageFrameMs > budgets.averageFrameMs, `average frame ${metrics.averageFrameMs}ms`],
     [metrics.p95FrameMs > budgets.p95FrameMs, `p95 ${metrics.p95FrameMs}ms`],
-    [metrics.longTasks > budgets.longTasks, `${metrics.longTasks} tarefas longas`],
-    [metrics.transferBytes > budgets.transferBytes, `${metrics.transferBytes} bytes transferidos`],
-    [metrics.heapBytes > budgets.heapBytes, `${metrics.heapBytes} bytes de heap`],
+    [metrics.longTasks > budgets.longTasks, `${metrics.longTasks} long tasks`],
+    [metrics.transferBytes > budgets.transferBytes, `${metrics.transferBytes} transferred bytes`],
+    [metrics.heapBytes > budgets.heapBytes, `${metrics.heapBytes} heap bytes`],
   ].filter(([failed]) => failed).map(([, message]) => message);
-  if (failures.length) throw new Error(`${label} excedeu orçamento: ${failures.join(", ")}`);
+  if (failures.length) throw new Error(`${label} exceeded its budget: ${failures.join(", ")}`);
   return metrics;
 }
 
@@ -107,7 +110,7 @@ try {
     await page.close();
   }
   console.table(results);
-  console.log("Desempenho aprovado nos orçamentos de desktop e mobile.");
+  console.log("Performance passed the desktop and mobile budgets.");
 } finally {
   await browser?.close();
   await new Promise((resolve, reject) => {

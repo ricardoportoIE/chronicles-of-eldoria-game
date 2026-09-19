@@ -12,7 +12,7 @@ function pointerEvent(type, properties = {}) {
 afterEach(() => vi.restoreAllMocks());
 
 describe("InputController", () => {
-  it("calcula zona morta, força progressiva e distância mínima segura", () => {
+  it("calculates the dead zone, progressive force and safe minimum distance", () => {
     expect(getTouchVector(8, 0)).toEqual({ x: 0, y: 0, knobX: 0, knobY: 0 });
     expect(getTouchVector(9, 0, { deadZone: 8, maxDistance: 8 })).toEqual({
       x: 1,
@@ -22,7 +22,7 @@ describe("InputController", () => {
     });
   });
 
-  it("normaliza teclado, previne ações do navegador e pausa uma vez", () => {
+  it("normalises keyboard input, prevents browser actions and pauses once", () => {
     const onPause = vi.fn();
     const input = new InputController({ onPause });
     const ignored = new KeyboardEvent("keydown", { key: "q", cancelable: true });
@@ -48,7 +48,7 @@ describe("InputController", () => {
     input.destroy();
   });
 
-  it("combina botões virtuais, disparo e movimento touch", () => {
+  it("combines virtual buttons, firing and touch movement", () => {
     const input = new InputController();
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "p" }));
     input.setVirtualKey(" ", true);
@@ -67,7 +67,7 @@ describe("InputController", () => {
     input.destroy();
   });
 
-  it("opera joystick de ponteiro e bloqueia menu de pressão longa", () => {
+  it("operates the pointer joystick and blocks the long-press menu", () => {
     const joystick = vi.fn();
     const input = new InputController({ onTouchJoystick: joystick });
     const surface = document.createElement("div");
@@ -109,11 +109,11 @@ describe("InputController", () => {
     input.destroy();
   });
 
-  it("tolera WebView sem captura e solta no lostpointercapture", () => {
+  it("tolerates a WebView without capture and releases on lostpointercapture", () => {
     const input = new InputController();
     const surface = document.createElement("div");
     surface.getBoundingClientRect = () => ({ left: 0, top: 0 });
-    surface.setPointerCapture = () => { throw new Error("indisponível"); };
+    surface.setPointerCapture = () => { throw new Error("unavailable"); };
     input.bindTouchSurface(surface);
     surface.dispatchEvent(pointerEvent("pointerdown", {
       pointerId: 3, pointerType: "pen", clientX: 1, clientY: 1,

@@ -43,7 +43,7 @@ afterEach(() => {
 });
 
 describe("CanvasGame", () => {
-  it("inicia uma sessão limpa e agenda o primeiro quadro", () => {
+  it("starts a clean session and schedules the first frame", () => {
     const { game, audio } = createGame();
     game.enemies = [{}];
     game.sparks = [{}];
@@ -55,7 +55,7 @@ describe("CanvasGame", () => {
     expect(requestAnimationFrame).toHaveBeenCalledWith(game.loop);
   });
 
-  it("pausa, retoma, respeita força e ignora estados finais", () => {
+  it("pauses, resumes, respects forced state and ignores final states", () => {
     const { game, onUpdate } = createGame();
     expect(game.togglePause()).toBe("ready");
     game.session.start();
@@ -66,7 +66,7 @@ describe("CanvasGame", () => {
     expect(onUpdate).toHaveBeenCalledTimes(2);
   });
 
-  it("executa loop jogando, pausado e encerra agenda no game over", () => {
+  it("runs the loop whilst playing and paused, then stops on game over", () => {
     const { game, onUpdate } = createGame();
     game.session.start();
     const update = vi.spyOn(game, "update");
@@ -84,7 +84,7 @@ describe("CanvasGame", () => {
     expect(requestAnimationFrame).toHaveBeenCalledTimes(2);
   });
 
-  it("move, dispara, progride nível, remove partículas expiradas", () => {
+  it("moves, fires, progresses a level and removes expired particles", () => {
     const { game, input, audio, onLevel } = createGame();
     game.session.start();
     game.enemies = [];
@@ -99,7 +99,7 @@ describe("CanvasGame", () => {
     expect(game.sparks).toHaveLength(0);
   });
 
-  it("remove projétil e inimigo atingidos e cria faíscas", () => {
+  it("removes the projectile and struck enemy, then creates sparks", () => {
     const { game, audio } = createGame();
     game.session.start();
     const enemy = positionEnemy(new Enemy(1, 100), { x: 300, y: 300 });
@@ -115,7 +115,7 @@ describe("CanvasGame", () => {
     expect(game.sparks).toHaveLength(12);
   });
 
-  it("causa dano, respeita invulnerabilidade e encerra a partida", () => {
+  it("deals damage, respects invulnerability and ends the session", () => {
     const { game, audio, onGameOver } = createGame();
     game.session.start();
     game.hero.x = 300;
@@ -139,7 +139,7 @@ describe("CanvasGame", () => {
     expect(onGameOver).toHaveBeenCalled();
   });
 
-  it("funde apenas pares válidos na arena e remove absorvidos", () => {
+  it("merges only valid pairs in the arena and removes absorbed enemies", () => {
     const { game } = createGame();
     const outside = positionEnemy(new Enemy(1, 100), { x: -1, y: 300 });
     const first = positionEnemy(new Enemy(2, 100), { x: 300, y: 300 });
@@ -152,7 +152,7 @@ describe("CanvasGame", () => {
     expect(game.sparks).toHaveLength(20);
   });
 
-  it("não altera lista quando não há fusões", () => {
+  it("does not change the list when there are no merges", () => {
     const { game } = createGame();
     game.enemies = [
       positionEnemy(new Enemy(1, 100), { x: 100, y: 100 }),
@@ -162,7 +162,7 @@ describe("CanvasGame", () => {
     expect(game.enemies).toHaveLength(2);
   });
 
-  it("desenha com tremor, invulnerabilidade e ambos os recortes da arena", () => {
+  it("draws with shake, invulnerability and both arena crop directions", () => {
     const { game, context, canvas, assets } = createGame();
     game.session.start();
     game.shake = 0.21;
@@ -189,7 +189,7 @@ describe("CanvasGame", () => {
     expect(context.drawImage).toHaveBeenCalled();
   });
 
-  it("encerra animação e áudio ao destruir", () => {
+  it("stops animation and audio when destroyed", () => {
     const { game, audio } = createGame();
     game.frameRequest = 44;
     game.destroy();

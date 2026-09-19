@@ -133,7 +133,7 @@ export class InputController {
         try {
           element.setPointerCapture?.(event.pointerId);
         } catch {
-          // Eventos sintéticos e alguns WebViews não oferecem captura de ponteiro.
+          // Synthetic events and some WebViews do not support pointer capture.
         }
         this.touchMovement = { x: 0, y: 0 };
         this.onTouchJoystick({
