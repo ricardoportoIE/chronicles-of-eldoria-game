@@ -26,7 +26,9 @@ export class GameSession {
   update(deltaSeconds) {
     if (this.status !== "playing") return;
 
-    this.elapsed += clamp(deltaSeconds, 0, 0.1);
+    const safeDelta = clamp(deltaSeconds, 0, 0.1);
+    this.elapsed += safeDelta;
+    this.score += safeDelta * this.config.scoring.survivalPerSecond;
     if (
       this.combo > 0 &&
       this.elapsed - this.lastHitAt > this.config.scoring.comboWindowSeconds
@@ -93,7 +95,7 @@ export class GameSession {
       status: this.status,
       elapsed: this.elapsed,
       life: this.life,
-      score: this.score,
+      score: Math.floor(this.score),
       combo: this.combo,
       canShoot: this.canShoot(),
       difficulty: getDifficulty(this.elapsed, this.config),
