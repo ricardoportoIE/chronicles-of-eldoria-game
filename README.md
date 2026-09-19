@@ -1,5 +1,7 @@
 # Chronicles of Eldoria
 
+[![Play online](https://img.shields.io/badge/Play_online-game.ricardoporto.dev-2ea44f?style=for-the-badge&logo=netlify&logoColor=white)](https://game.ricardoporto.dev/)
+
 [![Quality gate](https://github.com/ricardoportoIE/chronicles-of-eldoria-game/actions/workflows/quality.yml/badge.svg)](https://github.com/ricardoportoIE/chronicles-of-eldoria-game/actions/workflows/quality.yml)
 
 > A modern, responsive 2D survival game built with vanilla JavaScript, Canvas 2D and Three.js — backed by measurable standards for testing, accessibility, performance and front-end security.
@@ -7,6 +9,23 @@
 Chronicles of Eldoria places the player in the role of the realm's final guardian. Fire sentinels have surrounded the kingdom, and survival depends on evasion, precision and the use of arcane light to turn hostile energy into life.
 
 This project began as an academic JavaScript exercise for the Technology in Internet Systems course at IFSul Pelotas. It has since been comprehensively modernised as a portfolio project, whilst preserving the original story, visual identity and gameplay premise.
+
+## Play online
+
+**[Launch Chronicles of Eldoria →](https://game.ricardoporto.dev/)**
+
+Play directly in your browser, with no installation or account required. The Vite production build is hosted on **Netlify**, with a custom domain configured through **Cloudflare DNS**.
+
+### Try the game
+
+1. Select **Open the chronicles** to begin.
+2. On desktop, move with **WASD / arrow keys** and fire with **Space**.
+3. On mobile, drag on the arena or use the directional pad, then tap **Light** to fire.
+4. Try **pause/resume**, sound and full-screen controls; use the pause or game-over panel to restart.
+
+High scores are stored locally in your browser, rather than in a shared online leaderboard.
+
+**Review the engineering:** [CI runs and test results](https://github.com/ricardoportoIE/chronicles-of-eldoria-game/actions/workflows/quality.yml) · [Testing strategy and performance budgets](./QUALITY.md) · [Test source](./tests)
 
 ## Modernisation and skills demonstrated
 
@@ -87,6 +106,19 @@ The quality gate currently includes:
 The latest local production baseline completed at approximately **144 fps** in both automated viewport profiles, with an average frame time of **6.94 ms**. Loading completed in **1.22 s on desktop** and **0.74 s on mobile**. These figures are environment-dependent; the committed performance budgets are the repeatable acceptance criteria.
 
 The full testing strategy and performance thresholds are documented in [QUALITY.md](./QUALITY.md).
+
+### Inspect or reproduce the tests
+
+Open the [Quality gate workflow](https://github.com/ricardoportoIE/chronicles-of-eldoria-game/actions/workflows/quality.yml), select a run and inspect **Test, audit and build** for results. Successful runs upload `coverage-report` and `production-build` artefacts, retained for 14 days.
+
+After cloning the repository and installing a supported Node.js version and Chromium browser:
+
+```bash
+npm ci
+npm run test:quality
+```
+
+Coverage thresholds apply to **`src/game`**, not the entire application. Browser tests exercise desktop and mobile **Chromium viewports**, including synthetic touch input; they do not establish compatibility with every physical device or browser. The automated checks run against local development/production servers, not the public demo. Performance measurements are local acceptance checks, not live-site speed guarantees.
 
 ## Modernisation highlights
 
