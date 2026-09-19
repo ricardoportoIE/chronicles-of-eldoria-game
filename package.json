@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "node tests/browser.mjs",
-    "test:performance": "node tests/performance.mjs",
+    "test:performance": "npm run build && node tests/performance.mjs",
     "test:security": "vitest run tests/security.test.js && npm audit --audit-level=moderate",
     "test:quality": "npm run test:coverage && npm run test:e2e && npm run test:performance && npm run test:security && npm run build",
     "test:watch": "vitest"
