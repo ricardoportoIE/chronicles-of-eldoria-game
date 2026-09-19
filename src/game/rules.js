@@ -53,3 +53,9 @@ export function circlesOverlap(first, second) {
 export function circleOverlapsAny(circle, targets) {
   return targets.some((target) => circlesOverlap(circle, target));
 }
+
+export function shapesOverlap(firstShape, secondShape) {
+  return firstShape.some((firstCircle) =>
+    circleOverlapsAny(firstCircle, secondShape),
+  );
+}

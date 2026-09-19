@@ -131,6 +131,7 @@ export class Enemy {
     const horizontalPosition = margin + Math.random() * (this.config.world.width - margin * 2);
     const verticalPosition = margin + Math.random() * (this.config.world.height - margin * 2);
     this.speed = speed;
+    this.scale = 1;
 
     if (edge === 0) {
       [this.x, this.y, this.vx, this.vy] = [horizontalPosition, -margin, 0, speed];
@@ -165,12 +166,24 @@ export class Enemy {
   }
 
   isOutside() {
-    const margin = 90;
+    const margin = Math.max(
+      90,
+      (this.config.enemy.width * this.scale) / 2 + 10,
+    );
     return (
       this.x < -margin ||
       this.x > this.config.world.width + margin ||
       this.y < -margin ||
       this.y > this.config.world.height + margin
+    );
+  }
+
+  isInArena() {
+    return (
+      this.x >= 0 &&
+      this.x <= this.config.world.width &&
+      this.y >= 0 &&
+      this.y <= this.config.world.height
     );
   }
 
@@ -181,6 +194,9 @@ export class Enemy {
     const frame = Math.floor(this.animationTime * 12) % frames;
     const angle = Math.atan2(this.vy, this.vx);
 
+    const renderWidth = this.config.enemy.width * this.scale;
+    const renderHeight = this.config.enemy.height * this.scale;
+
     context.save();
     context.translate(this.x, this.y);
     context.rotate(angle);
@@ -190,10 +206,10 @@ export class Enemy {
       frame * cellHeight,
       cellWidth,
       cellHeight,
-      -this.config.enemy.width / 2,
-      -this.config.enemy.height / 2,
-      this.config.enemy.width,
-      this.config.enemy.height,
+      -renderWidth / 2,
+      -renderHeight / 2,
+      renderWidth,
+      renderHeight,
     );
     context.restore();
   }
@@ -204,10 +220,36 @@ export class Enemy {
     const directionY = this.vy / magnitude;
 
     return this.config.enemy.hitboxOffsets.map((offset) => ({
-      x: this.x + directionX * offset,
-      y: this.y + directionY * offset,
-      radius: this.config.enemy.hitboxRadius,
+      x: this.x + directionX * offset * this.scale,
+      y: this.y + directionY * offset * this.scale,
+      radius: this.config.enemy.hitboxRadius * this.scale,
     }));
+  }
+
+  mergeWith(other, speed) {
+    const ownMass = this.scale ** 2;
+    const otherMass = other.scale ** 2;
+    const totalMass = ownMass + otherMass;
+    let resultantX = this.vx * ownMass + other.vx * otherMass;
+    let resultantY = this.vy * ownMass + other.vy * otherMass;
+
+    this.x = (this.x * ownMass + other.x * otherMass) / totalMass;
+    this.y = (this.y * ownMass + other.y * otherMass) / totalMass;
+    this.scale = Math.min(
+      Math.max(this.scale, other.scale) * 2,
+      this.config.enemy.maxScale,
+    );
+
+    let magnitude = Math.hypot(resultantX, resultantY);
+    if (magnitude < 0.001) {
+      resultantX = this.vx;
+      resultantY = this.vy;
+      magnitude = Math.hypot(resultantX, resultantY) || 1;
+    }
+
+    this.vx = (resultantX / magnitude) * speed;
+    this.vy = (resultantY / magnitude) * speed;
+    this.speed = speed;
   }
 }
 

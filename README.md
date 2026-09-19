@@ -9,6 +9,7 @@ O projeto nasceu como atividade acadêmica no curso de TSI do IFSul Pelotas e fo
 - Movimentação por WASD ou setas, com diagonais normalizadas.
 - Disparo de luz arcana com a barra de espaço.
 - Dificuldade progressiva por capítulos: mais inimigos, velocidade e dano.
+- Fusão vetorial de sentinelas: chamas que se encontram crescem e seguem a direção da força resultante.
 - Cura, pontuação, combo, tempo de sobrevivência e recorde local.
 - Pausa, reinício, tela cheia e controle de som sem diálogos bloqueantes.
 - Controles de toque para celulares e tablets.

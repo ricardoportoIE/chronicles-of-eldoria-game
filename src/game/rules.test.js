@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { GameSession } from "./GameSession.js";
 import { GAME_CONFIG } from "./config.js";
+import { Enemy } from "./entities.js";
 import {
   circleOverlapsAny,
   circlesOverlap,
   getDifficulty,
   getHealAmount,
   getHitScore,
+  shapesOverlap,
 } from "./rules.js";
 import { readBestScore, saveBestScore } from "./storage.js";
 
@@ -106,6 +108,53 @@ describe("colisões e persistência", () => {
     expect(halfHitboxWidth).toBeLessThanOrEqual(GAME_CONFIG.enemy.width / 2);
     expect(GAME_CONFIG.enemy.hitboxRadius).toBeLessThanOrEqual(
       GAME_CONFIG.enemy.height / 2,
+    );
+  });
+
+  it("detecta encontro entre hitboxes compostas", () => {
+    const firstShape = [{ x: 0, y: 0, radius: 12 }];
+    const secondShape = [{ x: 20, y: 0, radius: 12 }];
+    const distantShape = [{ x: 30, y: 0, radius: 12 }];
+
+    expect(shapesOverlap(firstShape, secondShape)).toBe(true);
+    expect(shapesOverlap(firstShape, distantShape)).toBe(false);
+  });
+
+  it("funde duas chamas na direção da força resultante", () => {
+    const upward = new Enemy(1, 100);
+    const rightward = new Enemy(2, 100);
+    upward.x = 100;
+    upward.y = 100;
+    upward.vx = 0;
+    upward.vy = -100;
+    rightward.x = 100;
+    rightward.y = 100;
+    rightward.vx = 100;
+    rightward.vy = 0;
+
+    upward.mergeWith(rightward, 100);
+
+    expect(upward.scale).toBe(2);
+    expect(upward.vx).toBeCloseTo(Math.SQRT1_2 * 100);
+    expect(upward.vy).toBeCloseTo(-Math.SQRT1_2 * 100);
+  });
+
+  it("dobra sprite e hitbox juntos sem ultrapassar a arte", () => {
+    const enemy = new Enemy(1, 100);
+    enemy.x = 0;
+    enemy.y = 0;
+    enemy.vx = 100;
+    enemy.vy = 0;
+    enemy.scale = 2;
+    const halfHitboxWidth = Math.max(
+      ...enemy.hitCircles.map((circle) => Math.abs(circle.x) + circle.radius),
+    );
+
+    expect(halfHitboxWidth).toBeLessThanOrEqual(
+      (GAME_CONFIG.enemy.width * enemy.scale) / 2,
+    );
+    expect(enemy.hitCircles[0].radius).toBeLessThanOrEqual(
+      (GAME_CONFIG.enemy.height * enemy.scale) / 2,
     );
   });
 

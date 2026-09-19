@@ -22,6 +22,7 @@ export const GAME_CONFIG = Object.freeze({
     hitboxOffsets: Object.freeze([-32, -16, 0, 16, 32]),
     width: 92,
     height: 34,
+    maxScale: 4,
   }),
   progression: Object.freeze({
     levelEverySeconds: 20,

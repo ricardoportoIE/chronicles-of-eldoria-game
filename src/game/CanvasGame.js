@@ -1,6 +1,6 @@
 import { GAME_CONFIG } from "./config.js";
 import { GameSession } from "./GameSession.js";
-import { circleOverlapsAny } from "./rules.js";
+import { circleOverlapsAny, shapesOverlap } from "./rules.js";
 import { Enemy, Hero, Spark } from "./entities.js";
 
 export class CanvasGame {
@@ -81,6 +81,7 @@ export class CanvasGame {
     this.enemies.forEach((enemy) =>
       enemy.update(delta, snapshot.difficulty.enemySpeed),
     );
+    this.resolveEnemyMerges(snapshot.difficulty.enemySpeed);
     this.resolveCollisions();
     this.sparks.forEach((spark) => spark.update(delta));
     this.sparks = this.sparks.filter((spark) => spark.life > 0);
@@ -137,6 +138,43 @@ export class CanvasGame {
         this.onGameOver(this.session.getSnapshot());
         break;
       }
+    }
+  }
+
+  resolveEnemyMerges(speed) {
+    const absorbedEnemies = new Set();
+
+    for (let firstIndex = 0; firstIndex < this.enemies.length; firstIndex += 1) {
+      const firstEnemy = this.enemies[firstIndex];
+      if (absorbedEnemies.has(firstEnemy.id) || !firstEnemy.isInArena()) continue;
+
+      for (
+        let secondIndex = firstIndex + 1;
+        secondIndex < this.enemies.length;
+        secondIndex += 1
+      ) {
+        const secondEnemy = this.enemies[secondIndex];
+        if (
+          absorbedEnemies.has(secondEnemy.id) ||
+          !secondEnemy.isInArena() ||
+          !shapesOverlap(firstEnemy.hitCircles, secondEnemy.hitCircles)
+        ) {
+          continue;
+        }
+
+        const mergeX = (firstEnemy.x + secondEnemy.x) / 2;
+        const mergeY = (firstEnemy.y + secondEnemy.y) / 2;
+        firstEnemy.mergeWith(secondEnemy, speed);
+        absorbedEnemies.add(secondEnemy.id);
+        this.createSparks(mergeX, mergeY, "#ffbd59", 20);
+        break;
+      }
+    }
+
+    if (absorbedEnemies.size > 0) {
+      this.enemies = this.enemies.filter(
+        (enemy) => !absorbedEnemies.has(enemy.id),
+      );
     }
   }
 
