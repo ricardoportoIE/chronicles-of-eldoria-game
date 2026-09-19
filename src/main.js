@@ -139,7 +139,11 @@ function bindInterface(input) {
     };
     button.addEventListener("pointerdown", (event) => {
       event.preventDefault();
-      button.setPointerCapture(event.pointerId);
+      try {
+        button.setPointerCapture?.(event.pointerId);
+      } catch {
+        // Alguns WebViews não oferecem captura para eventos touch sintéticos.
+      }
       input.setVirtualKey(button.dataset.key, true);
       button.classList.add("is-active");
     });
