@@ -43,7 +43,8 @@
           </div>
 
           <div class="canvas-frame">
-            <canvas id="gameCanvas" width="960" height="600" tabindex="0" aria-label="Arena. Use W A S D ou as setas para mover e espaço para disparar."></canvas>
+            <canvas id="gameCanvas" width="960" height="600" tabindex="0" aria-label="Arena. Use W A S D, setas ou arraste a tela para mover; use espaço ou o botão Luz para disparar."></canvas>
+            <div class="touch-stick" id="touchStick" aria-hidden="true"><span></span></div>
 
             <div class="game-overlay game-overlay--loading" id="loadingOverlay">
               <img src="/loading.webp" alt="" width="72" height="50" />
@@ -61,6 +62,7 @@
                   <span><kbd>ESPAÇO</kbd><small>disparar</small></span>
                   <span><kbd>P</kbd><small>pausar</small></span>
                 </div>
+                <p class="touch-hint">Arraste em qualquer ponto livre da arena ou use o direcional.</p>
                 <p class="story-panel__warning">A tempestade ganha força a cada novo capítulo.</p>
                 <button class="primary-button" id="startButton" type="button">Abrir as crônicas</button>
               </article>

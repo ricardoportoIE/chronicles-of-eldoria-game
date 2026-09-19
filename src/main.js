@@ -16,6 +16,17 @@ app.dataset.layout = gameConfig.mode;
 let game;
 let levelBannerTimer;
 
+function updateTouchJoystick(state) {
+  const touchStick = byId("touchStick");
+  touchStick.classList.toggle("is-active", state.active);
+  if (!state.active) return;
+
+  touchStick.style.left = `${state.origin.x}px`;
+  touchStick.style.top = `${state.origin.y}px`;
+  touchStick.style.setProperty("--stick-x", `${state.knobX}px`);
+  touchStick.style.setProperty("--stick-y", `${state.knobY}px`);
+}
+
 function formatNumber(number) {
   return Math.floor(number).toString().padStart(6, "0");
 }
@@ -135,6 +146,7 @@ function bindInterface(input) {
     button.addEventListener("pointerup", release);
     button.addEventListener("pointercancel", release);
     button.addEventListener("lostpointercapture", release);
+    button.addEventListener("contextmenu", (event) => event.preventDefault());
   });
 }
 
@@ -146,7 +158,11 @@ async function initialize() {
     const assets = await loadGameAssets((progress) => {
       byId("loadingFill").style.width = `${Math.round(progress * 100)}%`;
     });
-    const input = new InputController({ onPause: () => togglePause() });
+    const input = new InputController({
+      onPause: () => togglePause(),
+      onTouchJoystick: updateTouchJoystick,
+    });
+    input.bindTouchSurface(canvas);
     game = new CanvasGame({
       canvas,
       assets,

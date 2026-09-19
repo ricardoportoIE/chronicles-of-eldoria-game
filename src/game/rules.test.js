@@ -6,6 +6,7 @@ import {
   getGameConfigForViewport,
 } from "./config.js";
 import { Enemy } from "./entities.js";
+import { getTouchVector } from "./InputController.js";
 import {
   circleOverlapsAny,
   circlesOverlap,
@@ -59,6 +60,27 @@ describe("progressão de Eldoria", () => {
     expect(getHealAmount(9_000)).toBe(12);
     expect(getHitScore(0, 99)).toBe(800);
     expect(getDifficulty(9_000).enemySpeed).toBe(250);
+  });
+});
+
+describe("controle touch", () => {
+  it("ignora pequenos movimentos dentro da zona morta", () => {
+    expect(getTouchVector(5, 5)).toEqual({
+      x: 0,
+      y: 0,
+      knobX: 0,
+      knobY: 0,
+    });
+  });
+
+  it("produz direção analógica e limita o deslocamento visual", () => {
+    const halfStrength = getTouchVector(20, 0);
+    expect(halfStrength.x).toBeCloseTo(0.5);
+    expect(halfStrength.y).toBe(0);
+
+    const diagonal = getTouchVector(100, 100);
+    expect(Math.hypot(diagonal.x, diagonal.y)).toBeCloseTo(1);
+    expect(Math.hypot(diagonal.knobX, diagonal.knobY)).toBeCloseTo(32);
   });
 });
 

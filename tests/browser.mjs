@@ -92,6 +92,47 @@ try {
   );
   if (touchDisplay !== "flex") throw new Error("Os controles de toque não apareceram no viewport mobile.");
 
+  const canvas = page.locator("#gameCanvas");
+  const canvasBox = await canvas.boundingBox();
+  const touchOrigin = {
+    x: canvasBox.x + canvasBox.width / 2,
+    y: canvasBox.y + canvasBox.height / 2,
+  };
+  await canvas.dispatchEvent("pointerdown", {
+    pointerId: 11,
+    pointerType: "touch",
+    isPrimary: true,
+    clientX: touchOrigin.x,
+    clientY: touchOrigin.y,
+  });
+  await canvas.dispatchEvent("pointermove", {
+    pointerId: 11,
+    pointerType: "touch",
+    isPrimary: true,
+    clientX: touchOrigin.x + 60,
+    clientY: touchOrigin.y - 35,
+  });
+  if (!(await page.locator("#touchStick").evaluate((element) => element.classList.contains("is-active")))) {
+    throw new Error("O joystick direto na arena não foi ativado.");
+  }
+  await canvas.dispatchEvent("pointerup", {
+    pointerId: 11,
+    pointerType: "touch",
+    isPrimary: true,
+    clientX: touchOrigin.x + 60,
+    clientY: touchOrigin.y - 35,
+  });
+
+  const contextMenuPrevented = await canvas.evaluate(
+    (element) =>
+      !element.dispatchEvent(
+        new MouseEvent("contextmenu", { bubbles: true, cancelable: true }),
+      ),
+  );
+  if (!contextMenuPrevented) {
+    throw new Error("A pressão longa ainda pode abrir o menu do navegador.");
+  }
+
   const fireButton = page.getByRole("button", { name: "Disparar luz arcana" });
   await fireButton.dispatchEvent("pointerdown", { pointerId: 1 });
   await page.waitForTimeout(80);

@@ -12,10 +12,39 @@ const CONTROL_KEYS = new Set([
   "escape",
 ]);
 
+export function getTouchVector(
+  deltaX,
+  deltaY,
+  { deadZone = 8, maxDistance = 32 } = {},
+) {
+  const distance = Math.hypot(deltaX, deltaY);
+  if (distance <= deadZone) {
+    return { x: 0, y: 0, knobX: 0, knobY: 0 };
+  }
+
+  const directionX = deltaX / distance;
+  const directionY = deltaY / distance;
+  const strength = Math.min(
+    1,
+    (distance - deadZone) / Math.max(1, maxDistance - deadZone),
+  );
+  const knobDistance = Math.min(distance, maxDistance);
+
+  return {
+    x: directionX * strength,
+    y: directionY * strength,
+    knobX: directionX * knobDistance,
+    knobY: directionY * knobDistance,
+  };
+}
+
 export class InputController {
-  constructor({ onPause = () => {} } = {}) {
+  constructor({ onPause = () => {}, onTouchJoystick = () => {} } = {}) {
     this.keys = new Set();
     this.onPause = onPause;
+    this.onTouchJoystick = onTouchJoystick;
+    this.touchMovement = { x: 0, y: 0 };
+    this.activeTouchPointer = null;
     this.abortController = new AbortController();
     const options = { signal: this.abortController.signal };
 
@@ -53,16 +82,81 @@ export class InputController {
     const vertical =
       Number(this.keys.has("s") || this.keys.has("arrowdown")) -
       Number(this.keys.has("w") || this.keys.has("arrowup"));
-    const magnitude = Math.hypot(horizontal, vertical) || 1;
-    return { x: horizontal / magnitude, y: vertical / magnitude };
+    if (horizontal || vertical) {
+      const magnitude = Math.hypot(horizontal, vertical);
+      return { x: horizontal / magnitude, y: vertical / magnitude };
+    }
+    return this.touchMovement;
   }
 
   get shooting() {
     return this.keys.has(" ");
   }
 
+  bindTouchSurface(element) {
+    const options = { signal: this.abortController.signal };
+    let origin = { x: 0, y: 0 };
+
+    const getPosition = (event) => {
+      const rect = element.getBoundingClientRect();
+      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    };
+
+    const updateTouch = (event) => {
+      if (event.pointerId !== this.activeTouchPointer) return;
+      event.preventDefault();
+      const position = getPosition(event);
+      const movement = getTouchVector(
+        position.x - origin.x,
+        position.y - origin.y,
+      );
+      this.touchMovement = { x: movement.x, y: movement.y };
+      this.onTouchJoystick({ active: true, origin, ...movement });
+    };
+
+    const releaseTouch = (event) => {
+      if (event.pointerId !== this.activeTouchPointer) return;
+      this.activeTouchPointer = null;
+      this.touchMovement = { x: 0, y: 0 };
+      this.onTouchJoystick({ active: false });
+    };
+
+    element.addEventListener(
+      "pointerdown",
+      (event) => {
+        if (event.pointerType === "mouse" || this.activeTouchPointer !== null) {
+          return;
+        }
+        event.preventDefault();
+        this.activeTouchPointer = event.pointerId;
+        origin = getPosition(event);
+        try {
+          element.setPointerCapture?.(event.pointerId);
+        } catch {
+          // Eventos sintéticos e alguns WebViews não oferecem captura de ponteiro.
+        }
+        this.touchMovement = { x: 0, y: 0 };
+        this.onTouchJoystick({
+          active: true,
+          origin,
+          x: 0,
+          y: 0,
+          knobX: 0,
+          knobY: 0,
+        });
+      },
+      options,
+    );
+    element.addEventListener("pointermove", updateTouch, options);
+    element.addEventListener("pointerup", releaseTouch, options);
+    element.addEventListener("pointercancel", releaseTouch, options);
+    element.addEventListener("lostpointercapture", releaseTouch, options);
+    element.addEventListener("contextmenu", (event) => event.preventDefault(), options);
+  }
+
   destroy() {
     this.abortController.abort();
     this.keys.clear();
+    this.touchMovement = { x: 0, y: 0 };
   }
 }
