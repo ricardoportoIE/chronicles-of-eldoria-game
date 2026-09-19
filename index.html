@@ -1,52 +1,110 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>2D Game - Chronicles of Eldoria</title>
-    <link rel="stylesheet" href="./assets/styles/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Chronicles of Eldoria: sobreviva à tempestade de fogo e proteja a chama ancestral." />
+    <meta name="theme-color" content="#070b12" />
+    <title>Chronicles of Eldoria</title>
     <link rel="icon" href="/favicon/favicon.ico" />
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="/favicon/apple-touch-icon.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="/favicon/favicon-32x32.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="/favicon/favicon-16x16.png"
-    />
+    <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
     <link rel="manifest" href="/favicon/site.webmanifest" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="/assets/styles/styles.css" />
   </head>
   <body>
-    <div class="loading">
-      <img
-        src="/loading.webp"
-        width="50px"
-        height="35px"
-        alt="Carregando..."
-      />Carregando...
+    <div class="app" id="app" data-game-state="loading">
+      <header class="topbar">
+        <div class="brand" aria-label="Chronicles of Eldoria">
+          <span class="brand__rune" aria-hidden="true">E</span>
+          <span><strong>Chronicles</strong><small>of Eldoria</small></span>
+        </div>
+        <div class="topbar__actions">
+          <button class="icon-button" id="pauseButton" type="button" aria-label="Pausar jogo" title="Pausar (P)"><span aria-hidden="true">Ⅱ</span></button>
+          <button class="icon-button" id="soundButton" type="button" aria-label="Desativar som" title="Som"><span aria-hidden="true">♫</span></button>
+          <button class="icon-button" id="fullscreenButton" type="button" aria-label="Tela cheia" title="Tela cheia"><span aria-hidden="true">⤢</span></button>
+          <a class="github-link" href="https://github.com/ricard00liveira/lpaw_2024_game" target="_blank" rel="noreferrer" aria-label="Abrir repositório no GitHub">
+            <span id="realmMark" aria-hidden="true"></span><span class="github-link__label">Código-fonte</span>
+          </a>
+        </div>
+      </header>
+
+      <main class="game-shell" aria-label="Jogo Chronicles of Eldoria">
+        <section class="arena" aria-label="Arena de Eldoria">
+          <div class="hud" aria-label="Estado da partida">
+            <div class="hud__life">
+              <span class="hud__label">Vitalidade</span>
+              <div class="life-bar" role="progressbar" aria-label="Vitalidade" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><span id="lifeFill"></span></div>
+              <strong id="lifeValue">100</strong>
+            </div>
+            <div class="hud__stat"><span class="hud__label">Crônicas</span><strong id="scoreValue">000000</strong></div>
+            <div class="hud__stat hud__stat--center"><span class="hud__label">Capítulo</span><strong id="levelValue">I</strong></div>
+            <div class="hud__stat"><span class="hud__label">Resistência</span><strong id="timeValue">00:00</strong></div>
+            <div class="hud__stat hud__shot"><span class="hud__label">Luz arcana</span><strong id="shotValue">PRONTA</strong></div>
+          </div>
+
+          <div class="canvas-frame">
+            <canvas id="gameCanvas" width="960" height="600" tabindex="0" aria-label="Arena. Use W A S D ou as setas para mover e espaço para disparar."></canvas>
+
+            <div class="game-overlay game-overlay--loading" id="loadingOverlay">
+              <img src="/loading.webp" alt="" width="72" height="50" />
+              <p>Despertando as runas…</p>
+              <div class="loading-track" aria-hidden="true"><span id="loadingFill"></span></div>
+            </div>
+
+            <div class="game-overlay game-overlay--intro" id="introOverlay">
+              <article class="story-panel">
+                <p class="eyebrow">Prólogo · A chama ancestral</p>
+                <h1>O último guardião de Eldoria</h1>
+                <p>O céu se rompeu, e as sentinelas de fogo cercaram o reino. Sua missão é resistir: desvie das chamas e use a luz arcana para convertê-las em vida.</p>
+                <div class="instructions" aria-label="Controles">
+                  <span><kbd>WASD</kbd><small>mover</small></span>
+                  <span><kbd>ESPAÇO</kbd><small>disparar</small></span>
+                  <span><kbd>P</kbd><small>pausar</small></span>
+                </div>
+                <p class="story-panel__warning">A tempestade ganha força a cada novo capítulo.</p>
+                <button class="primary-button" id="startButton" type="button">Abrir as crônicas</button>
+              </article>
+            </div>
+
+            <div class="game-overlay game-overlay--pause" id="pauseOverlay">
+              <article class="modal-card">
+                <p class="eyebrow">O tempo foi suspenso</p><h2>Crônica pausada</h2>
+                <p>Respire. A tempestade aguarda seu retorno.</p>
+                <button class="primary-button" id="resumeButton" type="button">Retomar jornada</button>
+                <button class="text-button" id="pauseRestartButton" type="button">Recomeçar</button>
+              </article>
+            </div>
+
+            <div class="game-overlay game-overlay--gameover" id="gameoverOverlay">
+              <article class="modal-card">
+                <p class="eyebrow">A chama se apagou</p><h2>Seu nome entrou nas crônicas</h2>
+                <div class="final-stats">
+                  <span><small>Pontuação</small><strong id="finalScore">0</strong></span>
+                  <span><small>Recorde</small><strong id="bestScore">0</strong></span>
+                </div>
+                <p id="finalMessage">Eldoria se lembrará da sua resistência.</p>
+                <button class="primary-button" id="restartButton" type="button">Tentar novamente</button>
+              </article>
+            </div>
+
+            <div class="level-banner" id="levelBanner" role="status" aria-live="polite"><small>Novo capítulo</small><strong id="levelBannerValue">II</strong></div>
+
+            <div class="touch-controls" aria-label="Controles de toque">
+              <div class="touch-dpad">
+                <button data-key="w" class="touch-button touch-button--up" aria-label="Mover para cima">▲</button>
+                <button data-key="a" class="touch-button touch-button--left" aria-label="Mover para a esquerda">◀</button>
+                <button data-key="s" class="touch-button touch-button--down" aria-label="Mover para baixo">▼</button>
+                <button data-key="d" class="touch-button touch-button--right" aria-label="Mover para a direita">▶</button>
+              </div>
+              <button data-key=" " class="touch-button touch-button--fire" aria-label="Disparar luz arcana">Luz</button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer"><span>Uma experiência em JavaScript, Canvas 2D e Three.js.</span><span>Ricardo Porto de Oliveira · IFSul Pelotas</span></footer>
+      <p class="sr-only" id="liveStatus" aria-live="polite"></p>
     </div>
-    <h1 class="game-title">Chronicles of Eldoria</h1>
-    <div class="game-container">
-      <canvas id="gameCanvas" width="800" height="600"></canvas>
-    </div>
-    <div class="game-footer">
-      Game [Chronicles of Eldoria] by Ricardo Porto de Oliveira.<br />IFSul
-      Câmpus Pelotas / TSI@2024.
-    </div>
-    <a href="https://github.com/ricard00liveira/lpaw_2024_game" target="_blank"
-      ><div id="modelContainer"></div
-    ></a>
-    <script type="module" src="main.js"></script>
-    <script type="module" src="model.js"></script>
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>
